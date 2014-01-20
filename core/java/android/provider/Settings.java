@@ -8023,6 +8023,12 @@ public final class Settings {
          * @hide
          */
         public static final String HALO_FLOAT_NOTIFICATIONS = "halo_float_notifications";
+		
+       /**
+         * HALO color, default is 0xffbbbbbb (normal)
+         * @hide
+         */
+        public static final String HALO_COLOR = "halo_color";
 
         /**
          * This are the settings to be backed up.
