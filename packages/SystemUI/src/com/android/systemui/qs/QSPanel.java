@@ -21,8 +21,13 @@ import android.animation.Animator.AnimatorListener;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ContentResolver;
+import android.database.ContentObserver;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.PorterDuff.Mode;
+import android.graphics.Point;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.os.UserHandle;
@@ -74,6 +79,9 @@ public class QSPanel extends ViewGroup {
     private boolean mExpanded;
     protected boolean mListening;
     private boolean mClosingDetail;
+	
+    private boolean mQSShadeTransparency = false;
+    private boolean mQSCSwitch = false;
 
     protected Record mDetailRecord;
     private Callback mCallback;
@@ -82,6 +90,7 @@ public class QSPanel extends ViewGroup {
 
     protected QSFooter mFooter;
     private boolean mGridContentVisible = true;
+	private SettingsObserver mSettingsObserver;
 
     public QSPanel(Context context) {
         this(context, null);
@@ -108,6 +117,7 @@ public class QSPanel extends ViewGroup {
         addView(mBrightnessView);
         addView(mFooter.getView());
         mClipper = new QSDetailClipper(mDetail);
+		mSettingsObserver = new SettingsObserver(mHandler);
         updateResources();
 
         mBrightnessController = new BrightnessController(getContext(),
@@ -146,7 +156,19 @@ public class QSPanel extends ViewGroup {
     protected void updateDetailText() {
         mDetailDoneButton.setText(R.string.quick_settings_done);
         mDetailSettingsButton.setText(R.string.quick_settings_more_settings);
+		updateKDPQSDetailText();
     }
+	
+	private void updateKDPQSDetailText() {
+        mQSCSwitch = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.QS_COLOR_SWITCH, 0) == 1;
+        int textColor = Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.QS_TEXT_COLOR, 0xffffffff);
+        if (mQSCSwitch) {
+            mDetailDoneButton.setTextColor(textColor);
+            mDetailSettingsButton.setTextColor(textColor);
+        }
+	}
 
     public void setBrightnessMirror(BrightnessMirrorController c) {
         super.onFinishInflate();
@@ -188,6 +210,7 @@ public class QSPanel extends ViewGroup {
         }
         if (mListening) {
             refreshAllTiles();
+			mSettingsObserver.observe();
         }
         updateDetailText();
     }
@@ -230,6 +253,9 @@ public class QSPanel extends ViewGroup {
         mFooter.setListening(mListening);
         if (mListening) {
             refreshAllTiles();
+            mSettingsObserver.observe();
+        } else {
+            mSettingsObserver.unobserve();
         }
         if (listening && showBrightnessSlider()) {
             mBrightnessController.registerCallbacks();
@@ -240,6 +266,10 @@ public class QSPanel extends ViewGroup {
 
     public void refreshAllTiles() {
         for (TileRecord r : mRecords) {
+            if (mQSCSwitch) {
+                r.tileView.setLabelColor();
+                r.tileView.setIconColor();
+            }
             r.tile.refreshState();
         }
         mFooter.refreshState();
@@ -598,6 +628,29 @@ public class QSPanel extends ViewGroup {
                 && ((TileRecord) mDetailRecord).scanState;
         fireScanStateChanged(scanState);
     }
+	
+    public void setDetailBackgroundColor(int color) {
+        mQSCSwitch = Settings.System.getInt(getContext().getContentResolver(),
+                Settings.System.QS_COLOR_SWITCH, 0) == 1;
+        mQSShadeTransparency = Settings.System.getInt(mContext.getContentResolver(),
+            Settings.System.QS_TRANSPARENT_SHADE, 0) == 1;
+        if (mQSCSwitch) {
+            if (mDetail != null) {
+                if (mQSShadeTransparency) {
+                    mDetail.getBackground().setColorFilter(
+                            color, Mode.MULTIPLY);
+                } else {
+                    mDetail.getBackground().setColorFilter(
+                            color, Mode.SRC_OVER);
+                }
+            }
+        }
+    }
+
+    public void setColors() {
+        refreshAllTiles();
+    }
+	
 
     private class H extends Handler {
         private static final int SHOW_DETAIL = 1;
@@ -666,5 +719,48 @@ public class QSPanel extends ViewGroup {
         void onShowingDetail(QSTile.DetailAdapter detail);
         void onToggleStateChanged(boolean state);
         void onScanStateChanged(boolean state);
+    }
+	
+    private class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_TRANSPARENT_SHADE),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_COLOR_SWITCH),
+                    false, this, UserHandle.USER_ALL);
+            update();
+        }
+
+        void unobserve() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.unregisterContentObserver(this);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            super.onChange(selfChange);
+            update();
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            update();
+        }
+
+        public void update() {
+            ContentResolver resolver = mContext.getContentResolver();			
+            mQSShadeTransparency = Settings.System.getIntForUser(
+            mContext.getContentResolver(), Settings.System.QS_TRANSPARENT_SHADE,
+                0, UserHandle.USER_CURRENT) == 1;
+            mQSCSwitch = Settings.System.getIntForUser(
+            mContext.getContentResolver(), Settings.System.QS_COLOR_SWITCH,
+                0, UserHandle.USER_CURRENT) == 1;
+        }
     }
 }
