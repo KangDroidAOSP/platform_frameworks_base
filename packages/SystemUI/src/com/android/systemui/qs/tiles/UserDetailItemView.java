@@ -27,6 +27,7 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -123,6 +124,19 @@ public class UserDetailItemView extends LinearLayout {
     private void updateTypeface() {
         boolean activated = ArrayUtils.contains(getDrawableState(), android.R.attr.state_activated);
         mName.setTypeface(activated ? mActivatedTypeface : mRegularTypeface);
+    }
+
+    public void setTextColor(boolean activated) {
+        boolean mQSCSwitch = Settings.System.getInt(getContext().getContentResolver(),
+                Settings.System.QS_COLOR_SWITCH, 0) == 1;
+        if (mQSCSwitch) {
+            int textColorNormal = Settings.System.getInt(getContext().getContentResolver(),
+                    Settings.System.QS_TEXT_COLOR, 0xffffffff);
+            int textColorActivated = getContext().getResources().getColor(
+                    R.color.system_accent_color);
+            int textColorDeactivated = (102 << 24) | (textColorNormal & 0x00ffffff); // Text color normal with a transparency of 40%
+            mName.setTextColor(activated ? textColorActivated : textColorDeactivated);
+        }
     }
 
     @Override
