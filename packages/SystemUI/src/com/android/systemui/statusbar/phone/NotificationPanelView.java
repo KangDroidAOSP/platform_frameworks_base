@@ -1472,7 +1472,8 @@ public class NotificationPanelView extends PanelView implements
         mNotificationStackScroller.setScrollingEnabled(
                 mStatusBarState != StatusBarState.KEYGUARD && (!mQsExpanded
                         || mQsExpansionFromOverscroll));
-        if (!getResources().getBoolean(R.bool.config_showTaskManagerSwitcher)) {
+        if (Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.ENABLE_TASK_MANAGER, 0) == 1) {
             mQsPanel.setVisibility(expandVisually ? View.VISIBLE : View.INVISIBLE);
         }
         mQsContainer.setVisibility(
@@ -1697,7 +1698,8 @@ public class NotificationPanelView extends PanelView implements
     }
 
     public void setTaskManagerVisibility(boolean mTaskManagerShowing) {
-        if (getResources().getBoolean(R.bool.config_showTaskManagerSwitcher)) {
+        if (Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.ENABLE_TASK_MANAGER, 0) == 1) {
             cancelAnimation();
             boolean expandVisually = mQsExpanded || mStackScrollerOverscrolling;
             mQsPanel.setVisibility(expandVisually && !mTaskManagerShowing
