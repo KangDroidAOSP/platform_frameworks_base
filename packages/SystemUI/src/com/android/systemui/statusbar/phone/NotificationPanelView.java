@@ -127,7 +127,6 @@ public class NotificationPanelView extends PanelView implements
     private KeyguardStatusBarView mKeyguardStatusBar;
     private QSContainer mQsContainer;
     private QSDragPanel mQsPanel;
-    private LinearLayout mTaskManagerPanel;
     private KeyguardStatusView mKeyguardStatusView;
     private ObservableScrollView mScrollView;
     private TextView mClockView;
@@ -266,7 +265,11 @@ public class NotificationPanelView extends PanelView implements
 
     // QS alpha
     private int mQSShadeAlpha;
-	
+
+    // Task manager
+    private boolean mShowTaskManager;
+    private LinearLayout mTaskManagerPanel;
+
     public NotificationPanelView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setWillNotDraw(!DEBUG);
@@ -1694,8 +1697,7 @@ public class NotificationPanelView extends PanelView implements
     }
 
     public void setTaskManagerVisibility(boolean mTaskManagerShowing) {
-        if (Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.ENABLE_TASK_MANAGER, 0) == 1) {
+        if (mShowTaskManager) {
             cancelAnimation();
             boolean expandVisually = mQsExpanded || mStackScrollerOverscrolling;
             mQsPanel.setVisibility(expandVisually && !mTaskManagerShowing
@@ -2631,6 +2633,8 @@ public class NotificationPanelView extends PanelView implements
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_TRANSPARENT_SHADE),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.ENABLE_TASK_MANAGER), false, this, UserHandle.USER_ALL);
             update();
         }
 
@@ -2660,6 +2664,8 @@ public class NotificationPanelView extends PanelView implements
                     UserHandle.USER_CURRENT) == 1;
             mQSShadeAlpha = Settings.System.getInt(
                     resolver, Settings.System.QS_TRANSPARENT_SHADE, 255);
+		    mShowTaskManager = Settings.System.getIntForUser(resolver,
+	                    Settings.System.ENABLE_TASK_MANAGER, 0, UserHandle.USER_CURRENT) == 1;
             setQSBackgroundAlpha();
         }
     }
@@ -2684,7 +2690,6 @@ public class NotificationPanelView extends PanelView implements
         } else if (source == StatusBarManager.CAMERA_LAUNCH_SOURCE_WIGGLE) {
             mLastCameraLaunchSource = KeyguardBottomAreaView.CAMERA_LAUNCH_SOURCE_WIGGLE;
         } else {
-
             // Default.
             mLastCameraLaunchSource = KeyguardBottomAreaView.CAMERA_LAUNCH_SOURCE_AFFORDANCE;
         }
