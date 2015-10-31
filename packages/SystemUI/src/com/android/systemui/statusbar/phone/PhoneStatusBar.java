@@ -588,8 +588,23 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     UserHandle.USER_ALL);
 	   resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_COLOR_SWITCH),
+                    false, this, UserHandle.USER_ALL);        
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_ICONS_SIGNAL_COLOR),
                     false, this, UserHandle.USER_ALL);
-            update();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_ICONS_NO_SIM_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_ICONS_AIRPLANE_MODE_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_STATUS_ICONS_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NOTIFICATION_ICONS_COLOR),
+                    false, this, UserHandle.USER_ALL);
+		    update();
         }
 
         @Override
@@ -618,7 +633,22 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.NOTIFICATION_DRAWER_CLEAR_ALL_ICON_COLOR))) {
                     UpdateNotifDrawerClearAllIconColor();
-            }
+			}  else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_ICONS_SIGNAL_COLOR))) {
+	                updateNetworkSignalColor();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_ICONS_NO_SIM_COLOR))) {
+					updateNoSimColor();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_ICONS_AIRPLANE_MODE_COLOR))) {
+					updateAirplaneModeColor();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_STATUS_ICONS_COLOR))) {
+	                updateStatusIconsColor();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NOTIFICATION_ICONS_COLOR))) {
+	                updateNotificationIconsColor();
+			   }
             update();
         }
 
@@ -1692,6 +1722,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mStatusBarHeaderMachine.addObserver(mHeader);
         mStatusBarHeaderMachine.updateEnablement();
         UpdateNotifDrawerClearAllIconColor();
+        updateNetworkIconColors();
         return mStatusBarView;
     }
 	
@@ -2731,6 +2762,54 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 0xffffffff, mCurrentUserId);
         if (mDismissView != null) {
             mDismissView.updateIconColor(color);
+        }
+    }
+
+    private void updateNetworkIconColors() {
+        if (mIconController != null) {
+            mIconController.updateNetworkIconColors();
+        }
+        if (mKeyguardStatusBar != null) {
+            mKeyguardStatusBar.updateNetworkIconColors();
+        }
+    }
+
+    private void updateNetworkSignalColor() {
+        if (mIconController != null) {
+            mIconController.updateNetworkSignalColor();
+        }
+        if (mKeyguardStatusBar != null) {
+            mKeyguardStatusBar.updateNetworkIconColors();
+        }
+    }
+
+    private void updateNoSimColor() {
+        if (mIconController != null) {
+            mIconController.updateNoSimColor();
+        }
+        if (mKeyguardStatusBar != null) {
+            mKeyguardStatusBar.updateNoSimColor();
+        }
+    }
+
+    private void updateAirplaneModeColor() {
+        if (mIconController != null) {
+            mIconController.updateAirplaneModeColor();
+        }
+        if (mKeyguardStatusBar != null) {
+            mKeyguardStatusBar.updateAirplaneModeColor();
+        }
+    }
+
+    private void updateStatusIconsColor() {
+        if (mIconController != null) {
+            mIconController.updateStatusIconsColor();
+        }
+    }
+
+    private void updateNotificationIconsColor() {
+        if (mIconController != null) {
+            mIconController.updateNotificationIconsColor();
         }
     }
 
