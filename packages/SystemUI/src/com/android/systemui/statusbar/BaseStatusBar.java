@@ -102,6 +102,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.internal.logging.MetricsLogger;
+import com.android.internal.navigation.Navigator;
 import com.android.internal.statusbar.IStatusBarService;
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.statusbar.StatusBarIconList;
@@ -217,7 +218,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected AccessibilityManager mAccessibilityManager;
 
     // on-screen navigation buttons
-    protected NavigationBarView mNavigationBarView = null;
+    protected Navigator mNavigationBarView = null;
 
     protected boolean mDeviceInteractive;
 
