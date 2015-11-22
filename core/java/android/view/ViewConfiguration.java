@@ -188,7 +188,7 @@ public class ViewConfiguration {
      * Maximum velocity to initiate a fling, as measured in dips per second
      * @hide
      */
-    public static final int DEFAULT_MAXIMUM_FLING_VELOCITY = 16000
+    public static final int DEFAULT_MAXIMUM_FLING_VELOCITY = 16000;
 
     /**
      * Delay before dispatching a recurring accessibility event in milliseconds.
