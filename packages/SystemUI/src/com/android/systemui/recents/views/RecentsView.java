@@ -389,15 +389,12 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
         }
         showMemDisplay();
 
-        boolean showClearAllRecents = Settings.System.getInt(resolver,
-                Settings.System.SHOW_CLEAR_ALL_RECENTS, 1) == 1;
-
         Rect taskStackBounds = new Rect();
         mConfig.getAvailableTaskStackBounds(width, height, mConfig.systemInsets.top,
                 mConfig.systemInsets.right, searchBarSpaceBounds, taskStackBounds);
 
 
-        if (mFloatingButton != null && showClearAllRecents) {
+        if (mFloatingButton != null) {
             int clearRecentsLocation = Settings.System.getInt(resolver,
                     Settings.System.RECENTS_CLEAR_ALL_LOCATION, Constants.DebugFlags.App.RECENTS_CLEAR_ALL_BOTTOM_RIGHT);
             FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)
@@ -425,8 +422,6 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
                     break;
             }
             mFloatingButton.setLayoutParams(params);
-        } else {
-            mFloatingButton.setVisibility(View.GONE);
         }
 
         // Measure each TaskStackView with the full width and height of the window since the

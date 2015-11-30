@@ -265,6 +265,8 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
                 mEmptyView.setVisibility(View.GONE);
                 mEmptyView.setOnClickListener(null);
             }
+			boolean showCmDefault = Settings.System.getInt(getContentResolver(),
+						Settings.System.RECENT_BUTTON_CHOOSE, 1) == 1;
             boolean showSearchBar = CMSettings.System.getInt(getContentResolver(),
                        CMSettings.System.RECENTS_SHOW_SEARCH_BAR, 1) == 1;
             findViewById(R.id.clear_recents).setVisibility(View.VISIBLE);
@@ -274,7 +276,11 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
                 } else {
                     mRecentsView.setSearchBarVisibility(View.GONE);
                 }
-       findViewById(R.id.floating_action_button).setVisibility(View.VISIBLE);
+			if (showCmDefault) {
+				findViewById(R.id.floating_action_button).setVisibility(View.VISIBLE);
+			} else {
+				findViewById(R.id.floating_action_button).setVisibility(View.GONE);
+				}
             } 
 		else {
                 if (showSearchBar) {
