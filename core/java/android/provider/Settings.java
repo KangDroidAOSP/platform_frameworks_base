@@ -3524,12 +3524,12 @@ public final class Settings {
          */
 
 	public static final String STATUS_BAR_RR_LOGO_COLOR = "status_bar_rr_logo_color";
-
-	/**
-         * show clear all recents button
-         *  @hide
-         */
-        public static final String SHOW_CLEAR_ALL_RECENTS = "show_clear_all_recents";
+	
+		/**
+		 * Choose Recents Clear Button
+		 * @hide
+		 */
+		public static final String RECENT_BUTTON_CHOOSE = "recent_button_choose";
 
         /**
          * location of the clear all recents button
