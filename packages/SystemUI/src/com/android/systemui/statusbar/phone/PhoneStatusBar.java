@@ -1077,6 +1077,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         addGestureAnywhereView();
         addSidebarView();
+        addAppCircleSidebar();
 
         if (mNavigationBarView == null) {
             mNavigationBarView =
