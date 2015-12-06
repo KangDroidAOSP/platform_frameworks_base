@@ -310,18 +310,6 @@ public class NotificationPanelView extends PanelView implements
     }
 
     @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        mSettingsObserver.observe();
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        mSettingsObserver.unobserve();
-    }
-
-    @Override
     protected void loadDimens() {
         super.loadDimens();
         mNotificationTopPadding = getResources().getDimensionPixelSize(
@@ -431,7 +419,6 @@ public class NotificationPanelView extends PanelView implements
             @Override
             public void onAnimationEnd(Animator animation) {
                 mQsSizeChangeAnimator = null;
-                mQsContainer.setHeightOverride(-1);
             }
         });
         mQsSizeChangeAnimator.start();
@@ -866,8 +853,8 @@ public class NotificationPanelView extends PanelView implements
         final float x = event.getX();
         float region = (w * (1.f/4.f)); // TODO overlay region fraction?
         final boolean showQsOverride = mOneFingerQuickSettingsIntercept &&
-                (isLayoutRtl() ? (x < region) : (w - region < x)
-                        && mStatusBarState == StatusBarState.SHADE);
+                isLayoutRtl() ? (x < region) : (w - region < x)
+                        && mStatusBarState == StatusBarState.SHADE;
 
         return twoFingerDrag || showQsOverride || stylusButtonClickDrag || mouseButtonClickDrag;
     }
@@ -1556,10 +1543,10 @@ public class NotificationPanelView extends PanelView implements
         if (mShowTaskManager) {
             mTaskManagerShowing = taskManagerShowing;
             cancelQsAnimation();
-            boolean expandVisually = mQsExpanded || mStackScrollerOverscrolling || mHeaderAnimating;
-            mQsPanel.setVisibility(expandVisually && !taskManagerShowing
+            boolean expandVisually1 = mQsExpanded || mStackScrollerOverscrolling;
+            mQsPanel.setVisibility(expandVisually1 && !taskManagerShowing
                     ? View.VISIBLE : View.GONE);
-            mTaskManagerPanel.setVisibility(expandVisually && taskManagerShowing
+            mTaskManagerPanel.setVisibility(expandVisually1 && taskManagerShowing
                     && !mKeyguardShowing ? View.VISIBLE : View.GONE);
         }
     }
