@@ -40,6 +40,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
+import android.provider.Settings;
 
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;

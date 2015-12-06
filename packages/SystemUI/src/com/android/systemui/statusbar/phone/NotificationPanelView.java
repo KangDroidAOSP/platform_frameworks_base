@@ -2541,6 +2541,7 @@ public class NotificationPanelView extends PanelView implements
         if (mQsPanel != null) {
             mQsPanel.setColors();
         }
+	}
 
     @Override
     public boolean hasOverlappingRendering() {
