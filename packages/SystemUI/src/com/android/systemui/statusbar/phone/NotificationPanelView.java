@@ -1024,7 +1024,7 @@ public class NotificationPanelView extends PanelView implements
 
     private void onQsExpansionStarted(int overscrollAmount) {
         cancelQsAnimation();
-        //cancelHeightAnimator();
+        cancelHeightAnimator();
 
         // Reset scroll position and apply that position to the expanded height.
         float height = mQsExpansionHeight - mScrollView.getScrollY() - overscrollAmount;
@@ -1309,7 +1309,6 @@ public class NotificationPanelView extends PanelView implements
     }
 
     private void updateQsState() {
-	boolean expandVisually1 = mQsExpanded || mStackScrollerOverscrolling;
         boolean expandVisually = mQsExpanded || mStackScrollerOverscrolling || mHeaderAnimating;
         mHeader.setVisibility((mQsExpanded || !mKeyguardShowing || mHeaderAnimating)
                 ? View.VISIBLE
@@ -1555,12 +1554,18 @@ public class NotificationPanelView extends PanelView implements
     public void setTaskManagerVisibility(boolean taskManagerShowing) {
         if (mShowTaskManager) {
             mTaskManagerShowing = taskManagerShowing;
-            cancelQsAnimation();
-            boolean expandVisually = mQsExpanded || mStackScrollerOverscrolling || mHeaderAnimating;
+            cancelAnimation();
+            boolean expandVisually = mQsExpanded || mStackScrollerOverscrolling;
             mQsPanel.setVisibility(expandVisually && !taskManagerShowing
                     ? View.VISIBLE : View.GONE);
             mTaskManagerPanel.setVisibility(expandVisually && taskManagerShowing
                     && !mKeyguardShowing ? View.VISIBLE : View.GONE);
+        }
+    }
+
+  private void cancelAnimation() {
+        if (mQsExpansionAnimator != null) {
+            mQsExpansionAnimator.cancel();
         }
     }
 
