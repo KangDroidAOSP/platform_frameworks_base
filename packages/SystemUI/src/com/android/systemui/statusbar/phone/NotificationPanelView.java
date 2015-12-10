@@ -31,9 +31,6 @@ import android.database.ContentObserver;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.PorterDuff.Mode;
-import android.net.Uri;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Handler;
@@ -237,10 +234,6 @@ public class NotificationPanelView extends PanelView implements
     private boolean mDoubleTapToSleepEnabled;
     private int mStatusBarHeaderHeight;
     private GestureDetector mDoubleTapGesture;
-	
-    private int mQSBackgroundColor;
-    private boolean mQSShadeTransparency = false;
-    private boolean mQSCSwitch = false;
 
     public NotificationPanelView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -307,13 +300,6 @@ public class NotificationPanelView extends PanelView implements
                 }
             }
         });
-		
-        mQSCSwitch = Settings.System.getInt(getContext().getContentResolver(),
-                Settings.System.QS_COLOR_SWITCH, 0) == 1;
-
-        if (mQSCSwitch) {
-            setQSBackgroundColor();
-        }
     }
 
     @Override
@@ -2464,14 +2450,6 @@ public class NotificationPanelView extends PanelView implements
                     CMSettings.System.STATUS_BAR_QUICK_QS_PULLDOWN), false, this);
             resolver.registerContentObserver(CMSettings.System.getUriFor(
                     CMSettings.System.DOUBLE_TAP_SLEEP_GESTURE), false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.QS_BACKGROUND_COLOR), false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.QS_ICON_COLOR), false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.QS_TEXT_COLOR), false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.QS_TRANSPARENT_SHADE), false, this);
             update();
         }
 
@@ -2488,26 +2466,6 @@ public class NotificationPanelView extends PanelView implements
         @Override
         public void onChange(boolean selfChange, Uri uri) {
             update();
-            ContentResolver resolver = mContext.getContentResolver();
-            if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.QS_COLOR_SWITCH))) {
-                if (uri.equals(Settings.System.getUriFor(
-                        Settings.System.QS_BACKGROUND_COLOR))
-                    || uri.equals(Settings.System.getUriFor(
-                        Settings.System.QS_TRANSPARENT_SHADE))) {
-                    mQSBackgroundColor = Settings.System.getInt(
-                            resolver, Settings.System.QS_BACKGROUND_COLOR, 0xff263238);
-                    mQSShadeTransparency = Settings.System.getInt(
-                            resolver, Settings.System.QS_TRANSPARENT_SHADE, 0) == 1;
-                    setQSBackgroundColor();
-                } else if (uri.equals(Settings.System.getUriFor(
-                        Settings.System.QS_ICON_COLOR))
-                    || uri.equals(Settings.System.getUriFor(
-                        Settings.System.QS_TEXT_COLOR))) {
-                    setQSColors();
-                }
-            }
-			update();
         }
 
         public void update() {
@@ -2515,44 +2473,9 @@ public class NotificationPanelView extends PanelView implements
             mOneFingerQuickSettingsIntercept = CMSettings.System.getInt(
                     resolver, CMSettings.System.STATUS_BAR_QUICK_QS_PULLDOWN, 1) == 1;
             mDoubleTapToSleepEnabled = CMSettings.System.getInt(
-                    resolver, CMSettings.System.DOUBLE_TAP_SLEEP_GESTURE, 1) == 1;			
-            mQSCSwitch = Settings.System.getInt(
-                    resolver, Settings.System.QS_COLOR_SWITCH, 0) == 1;
-			mQSBackgroundColor = Settings.System.getInt(
-                    resolver, Settings.System.QS_BACKGROUND_COLOR, 0xff263238);
-            mQSShadeTransparency = Settings.System.getInt(
-                    resolver, Settings.System.QS_TRANSPARENT_SHADE, 0) == 1;
-            if (mQSCSwitch) {
-                setQSBackgroundColor();
-                setQSColors();
-            }
+                    resolver, CMSettings.System.DOUBLE_TAP_SLEEP_GESTURE, 1) == 1;
         }
     }
-	
-    private void setQSBackgroundColor() {
-        ContentResolver resolver = mContext.getContentResolver();
-        mQSBackgroundColor = Settings.System.getInt(
-                resolver, Settings.System.QS_BACKGROUND_COLOR, 0xff263238);
-        mQSShadeTransparency = Settings.System.getInt(mContext.getContentResolver(),
-            Settings.System.QS_TRANSPARENT_SHADE, 0) == 1;
-        if (mQsContainer != null) {
-            if (mQSShadeTransparency) {
-                mQsContainer.getBackground().setColorFilter(
-                        mQSBackgroundColor, Mode.MULTIPLY);
-            } else {
-                mQsContainer.getBackground().setColorFilter(
-                        mQSBackgroundColor, Mode.SRC_OVER);
-            }
-        }
-        if (mQsPanel != null) {
-            mQsPanel.setDetailBackgroundColor(mQSBackgroundColor);
-        }
-    }
-
-    private void setQSColors() {
-        if (mQsPanel != null) {
-            mQsPanel.setColors();
-        }
 
     @Override
     public boolean hasOverlappingRendering() {
