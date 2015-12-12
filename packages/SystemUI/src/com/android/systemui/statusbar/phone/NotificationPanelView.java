@@ -35,6 +35,7 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.PowerManager;
+import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.MathUtils;
@@ -1546,6 +1547,14 @@ public class NotificationPanelView extends PanelView implements
                     ? View.VISIBLE : View.GONE);
             mTaskManagerPanel.setVisibility(expandVisually && mTaskManagerShowing
                     ? View.VISIBLE : View.GONE);
+        }
+    }
+
+
+
+  private void cancelAnimation() {
+        if (mQsExpansionAnimator != null) {
+            mQsExpansionAnimator.cancel();
         }
     }
 
