@@ -116,7 +116,6 @@ import android.view.WindowManagerGlobal;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.view.ViewGroup.MarginLayoutParams;
 import android.view.ViewStub;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
@@ -178,6 +177,7 @@ import com.android.systemui.statusbar.ScrimView;
 import com.android.systemui.statusbar.SignalClusterView;
 import com.android.systemui.statusbar.SpeedBumpView;
 import com.android.systemui.statusbar.StatusBarState;
+import com.android.systemui.statusbar.VisualizerView;
 import com.android.systemui.statusbar.phone.UnlockMethodCache.OnUnlockMethodChangedListener;
 import com.android.systemui.statusbar.policy.AccessibilityController;
 import com.android.systemui.statusbar.policy.BatteryController;
@@ -412,9 +412,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     int mKeyguardMaxNotificationCount;
 
-    // carrier label
-    private TextView mCarrierLabel;
-    private boolean mShowCarrierInPanel = false;
     boolean mExpandedVisible;
 
 
@@ -908,6 +905,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private PorterDuffXfermode mSrcXferMode = new PorterDuffXfermode(PorterDuff.Mode.SRC);
     private PorterDuffXfermode mSrcOverXferMode = new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER);
 
+    private VisualizerView mVisualizerView;
+    private boolean mScreenOn;
+
     private MediaSessionManager mMediaSessionManager;
     private MediaController mMediaController;
     private String mMediaNotificationKey;
@@ -923,6 +923,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     clearCurrentMediaNotification();
                     updateMediaMetaData(true);
                 }
+                mVisualizerView.setPlaying(state.getState() == PlaybackState.STATE_PLAYING);
             }
         }
 
@@ -1295,8 +1296,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mBackdropFront = (ImageView) mBackdrop.findViewById(R.id.backdrop_front);
         mBackdropBack = (ImageView) mBackdrop.findViewById(R.id.backdrop_back);
 
-        ScrimView scrimBehind = (ScrimView) mStatusBarWindowContent.findViewById(R.id.scrim_behind);
-        ScrimView scrimInFront = (ScrimView) mStatusBarWindowContent.findViewById(R.id.scrim_in_front);
+        FrameLayout scrimView = (FrameLayout) mStatusBarWindowContent.findViewById(R.id.scrimview);
+        ScrimView scrimBehind = (ScrimView) scrimView.findViewById(R.id.scrim_behind);
+        ScrimView scrimInFront =
+                (ScrimView) mStatusBarWindowContent.findViewById(R.id.scrim_in_front);
         View headsUpScrim = mStatusBarWindowContent.findViewById(R.id.heads_up_scrim);
         mScrimController = new ScrimController(scrimBehind, scrimInFront, headsUpScrim,
                 mScrimSrcModeEnabled);
@@ -1305,6 +1308,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mScrimController.setBackDropView(mBackdrop);
         mStatusBarView.setScrimController(mScrimController);
         mDozeScrimController = new DozeScrimController(mScrimController, context);
+        mVisualizerView = (VisualizerView) scrimView.findViewById(R.id.visualizerview);
 
         mHeader = (StatusBarHeaderView) mStatusBarWindowContent.findViewById(R.id.header);
         mHeader.setActivityStarter(this);
@@ -1394,23 +1398,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mNetworkController.addEmergencyListener(mHeader);
         }
 
-        mCarrierLabel = (TextView)mStatusBarWindow.findViewById(R.id.carrier_label);
-        final boolean showCarrierLabel = mContext.getResources().getBoolean(
-                R.bool.config_showCarrierLabel);
-        mShowCarrierInPanel = showCarrierLabel && (mCarrierLabel != null);
-        if (DEBUG) Log.v(TAG, "carrierlabel=" + mCarrierLabel + " show=" + mShowCarrierInPanel);
-        if (mShowCarrierInPanel) {
-            mCarrierLabel.setVisibility(mShowCarrierInPanel ? View.VISIBLE : View.INVISIBLE);
-        }
-
-        // make sure carrier label is not covered by navigation bar
-        if (mCarrierLabel != null && mNavigationBarView != null) {
-            MarginLayoutParams mlp = (MarginLayoutParams) mCarrierLabel.getLayoutParams();
-            if (mlp != null && mlp.bottomMargin < mNavigationBarView.mBarSize) {
-                mlp.bottomMargin = mNavigationBarView.mBarSize;
-                mCarrierLabel.setLayoutParams(mlp);
-            }
-        }
         mFlashlightController = new FlashlightController(mContext);
         mKeyguardBottomArea.setFlashlightController(mFlashlightController);
         mKeyguardBottomArea.setPhoneStatusBar(this);
@@ -1557,6 +1544,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         ((BatteryLevelTextView) mStatusBarView.findViewById(R.id.battery_level_text))
                 .setBatteryController(mBatteryController);
         mKeyguardStatusBar.setBatteryController(mBatteryController);
+        mVisualizerView.setKeyguardMonitor(mKeyguardMonitor);
         mHeader.setNextAlarmController(mNextAlarmController);
         mHeader.setWeatherController(mWeatherController);
 
@@ -2222,21 +2210,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mNotificationPanel.notifyVisibleChildrenChanged();
     }
 
-    protected void updateCarrierLabelVisibility() {
-        if (!mShowCarrierInPanel) return;
-
-        final boolean makeVisible = mStackScroller.getVisibility() == View.VISIBLE
-                && mState != StatusBarState.KEYGUARD;
-
-        if ((mCarrierLabel.getVisibility() == View.VISIBLE) != makeVisible) {
-            if (DEBUG) {
-                Log.d(TAG, "making carrier label " + (makeVisible?"visible":"invisible"));
-            }
-
-            mCarrierLabel.setVisibility(makeVisible ? View.VISIBLE : View.INVISIBLE);
-        }
-    }
-
     @Override
     protected void setAreThereNotifications() {
 
@@ -2458,6 +2431,26 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         // apply user lockscreen image
         if (mMediaMetadata == null && backdropBitmap == null) {
             backdropBitmap = mKeyguardWallpaper;
+        }
+
+        boolean keyguardVisible = (mState != StatusBarState.SHADE);
+
+        if (!mKeyguardFadingAway && keyguardVisible && backdropBitmap != null && mScreenOn) {
+            // if there's album art, ensure visualizer is visible
+            mVisualizerView.setVisible(true);
+            mVisualizerView.setPlaying(mMediaController != null
+                    && mMediaController.getPlaybackState() != null
+                    && mMediaController.getPlaybackState().getState()
+                            == PlaybackState.STATE_PLAYING);
+        }
+
+        if (backdropBitmap == null && mMediaMetadata == null) {
+            backdropBitmap = mKeyguardWallpaper;
+        }
+
+        if (keyguardVisible) {
+            // always use current backdrop to color eq
+            mVisualizerView.setBitmap(backdropBitmap);
         }
 
         final boolean hasBackdrop = backdropBitmap != null;
@@ -3818,6 +3811,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 }
             }
             else if (Intent.ACTION_SCREEN_OFF.equals(action)) {
+                mScreenOn = false;
                 notifyNavigationBarScreenOn(false);
                 notifyHeadsUpScreenOff();
                 finishBarAnimations();
@@ -3844,6 +3838,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 }
             }
             else if (Intent.ACTION_SCREEN_ON.equals(action)) {
+                mScreenOn = true;
                 notifyNavigationBarScreenOn(true);
             }
         }
@@ -4757,6 +4752,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                         - StatusBarIconController.DEFAULT_TINT_ANIMATION_DURATION,
                 StatusBarIconController.DEFAULT_TINT_ANIMATION_DURATION);
         disable(mDisabledUnmodified1, mDisabledUnmodified2, fadeoutDuration > 0 /* animate */);
+        mVisualizerView.setVisible(false);
     }
 
     public boolean isKeyguardFadingAway() {
@@ -4805,7 +4801,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         updateStackScrollerState(goingToFullShade);
         updateNotifications();
         checkBarModes();
-        updateCarrierLabelVisibility();
         updateMediaMetaData(false);
         mKeyguardMonitor.notifyKeyguardState(mStatusBarKeyguardViewManager.isShowing(),
                 mStatusBarKeyguardViewManager.isSecure());
@@ -4822,6 +4817,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mDozeScrimController.setDozing(mDozing &&
                 mFingerprintUnlockController.getMode()
                         != FingerprintUnlockController.MODE_WAKE_AND_UNLOCK_PULSING, animate);
+        mVisualizerView.setDozing(mDozing);
     }
 
     public void updateStackScrollerState(boolean goingToFullShade) {
@@ -5095,6 +5091,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mWakeUpTouchLocation = null;
         mStackScroller.setAnimationsEnabled(false);
         updateVisibleToUser();
+        mVisualizerView.setVisible(false);
         if (mLaunchCameraOnFinishedGoingToSleep) {
             mLaunchCameraOnFinishedGoingToSleep = false;
 
@@ -5133,6 +5130,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     public void onScreenTurnedOn() {
         mScreenTurningOn = false;
         mDozeScrimController.onScreenTurnedOn();
+        mVisualizerView.setVisible(true);
     }
 
     /**
@@ -5568,6 +5566,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         rs.destroy();
         return out;
+	}
+
+    public VisualizerView getVisualizer() {
+        return mVisualizerView;
     }
 
     private final class ShadeUpdates {

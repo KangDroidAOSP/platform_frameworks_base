@@ -35,6 +35,12 @@
     <!-- Publish dynamic tiles -->
     <uses-permission android:name="cyanogenmod.permission.PUBLISH_CUSTOM_TILE" />
 
+    <uses-permission android:name="cyanogenmod.permission.HARDWARE_ABSTRACTION_ACCESS" />
+
+    <!-- Visualizer -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <application>
         <provider android:name=".cm.SpamMessageProvider"
                   android:permission="android.permission.INTERACT_ACROSS_USERS_FULL"
