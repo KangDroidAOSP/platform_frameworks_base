@@ -3543,18 +3543,6 @@ public final class Settings {
         public static final String T9_SEARCH_INPUT_LOCALE = "t9_search_input_locale";
 
         /**
-         * Whether to use the custom status bar header or not
-         * @hide
-         */
-        public static final String STATUS_BAR_CUSTOM_HEADER = "status_bar_custom_header";
-
-        /**
-         * Current active provider
-         * @hide
-         */
-        public static final String STATUS_BAR_CUSTOM_HEADER_PROVIDER = "status_bar_custom_header_provider";
-
-        /**
          * Statusbar RR logo
          * @hide
          */
@@ -4179,15 +4167,6 @@ public final class Settings {
          * @hide
          */
         public static final String ON_THE_GO_SERVICE_RESTART = "on_the_go_service_restart";
-
-        /**
-         * Whether to use default custom header or poly hd
-         * 0 = default
-         * 1 = modern
-         * 2 = poly hd
-         * @hide
-         */
-        public static final String STATUS_BAR_CUSTOM_HEADER_DEFAULT = "status_bar_custom_header_default";
 
 	/*
          * Settings for clock font style
