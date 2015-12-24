@@ -647,13 +647,28 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mRRLogoColor = Settings.System.getIntForUser(resolver,
                     Settings.System.STATUS_BAR_RR_LOGO_COLOR, 0xFFFFFFFF, mCurrentUserId);
             showRRLogo(mRRlogo, mRRLogoColor);
+			
+			boolean showTaskManager = Settings.System.getIntForUser(resolver,
+		                    Settings.System.ENABLE_TASK_MANAGER, 0, UserHandle.USER_CURRENT) == 1;
+			    if (mShowTaskManager != showTaskManager) {
+		                if (!mShowTaskManager) {
+		                    // explicitly reset click state when disabled
+		                    mShowTaskList = false;
+		                }
+		                mShowTaskManager = showTaskManager;
+		                if (mHeader != null) {
+		                    mHeader.setTaskManagerEnabled(showTaskManager);
+		                }
+		                if (mNotificationPanel != null) {
+		                    mNotificationPanel.setTaskManagerEnabled(showTaskManager);
+		                }
+		            }
 
             if (mNavigationBarView != null) {
                 boolean navLeftInLandscape = CMSettings.System.getIntForUser(resolver,
                         CMSettings.System.NAVBAR_LEFT_IN_LANDSCAPE, 0, UserHandle.USER_CURRENT) == 1;
                 mNavigationBarView.setLeftInLandscape(navLeftInLandscape);
             }
-
 
             // This method reads CMSettings.Secure.RECENTS_LONG_PRESS_ACTIVITY
             updateCustomRecentsLongPressHandler(false);
@@ -691,22 +706,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
             mBlurRadius = Settings.System.getInt(mContext.getContentResolver(),
                     Settings.System.LOCKSCREEN_BLUR_RADIUS, 14);
-			
-	boolean showTaskManager = Settings.System.getIntForUser(resolver,
-                    Settings.System.ENABLE_TASK_MANAGER, 0, UserHandle.USER_CURRENT) == 1;
-	    if (mShowTaskManager != showTaskManager) {
-                if (!mShowTaskManager) {
-                    // explicitly reset click state when disabled
-                    mShowTaskList = false;
-                }
-                mShowTaskManager = showTaskManager;
-                if (mHeader != null) {
-                    mHeader.setTaskManagerEnabled(showTaskManager);
-                }
-                if (mNotificationPanel != null) {
-                    mNotificationPanel.setTaskManagerEnabled(showTaskManager);
-                }
-            }
         }
     }
 
