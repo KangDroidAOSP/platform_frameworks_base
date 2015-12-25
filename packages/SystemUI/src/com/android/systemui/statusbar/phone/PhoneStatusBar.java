@@ -618,6 +618,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     updateSpeedbump();
                     updateClearAll();
                     updateEmptyShadeView();
+					updateVolumeZen();
             }
 
             update();
