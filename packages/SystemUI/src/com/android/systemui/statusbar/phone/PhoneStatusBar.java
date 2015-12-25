@@ -391,6 +391,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private boolean mShowTaskManager;
     // task manager click state
     private boolean mShowTaskList = false;
+	private final StatusBarManager mService;
 
     // top bar
     StatusBarHeaderView mHeader;
@@ -568,6 +569,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
 	@Override
         public void onChange(boolean selfChange, Uri uri) {
+	        mIconPolicy = new PhoneStatusBarPolicy(mContext, mCastController, mHotspotController,
+	                mUserInfoController, mBluetoothController, mSuController);
             if (uri.equals(Settings.System.getUriFor(
                     Settings.System.BATTERY_SAVER_MODE_COLOR))) {
                     mBatterySaverWarningColor = Settings.System.getIntForUser(
@@ -618,6 +621,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     updateSpeedbump();
                     updateClearAll();
                     updateEmptyShadeView();
+					mService = (StatusBarManager) context.getSystemService(Context.STATUS_BAR_SERVICE);
+			        // volume
+			        mService.setIcon(SLOT_VOLUME, R.drawable.stat_sys_ringer_vibrate, 0, null);
+			        mService.setIconVisibility(SLOT_VOLUME, false);
+					mIconPolicy.updateVolumeZen();
             }
 
             update();
