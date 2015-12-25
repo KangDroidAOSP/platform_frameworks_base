@@ -568,6 +568,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
 	@Override
         public void onChange(boolean selfChange, Uri uri) {
+	        mIconPolicy = new PhoneStatusBarPolicy(mContext, mCastController, mHotspotController,
+	                mUserInfoController, mBluetoothController, mSuController);
             if (uri.equals(Settings.System.getUriFor(
                     Settings.System.BATTERY_SAVER_MODE_COLOR))) {
                     mBatterySaverWarningColor = Settings.System.getIntForUser(
@@ -618,6 +620,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     updateSpeedbump();
                     updateClearAll();
                     updateEmptyShadeView();
+					mIconPolicy.updateVolumeZen();
             }
 
             update();

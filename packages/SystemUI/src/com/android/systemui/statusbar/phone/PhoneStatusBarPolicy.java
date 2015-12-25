@@ -312,7 +312,7 @@ public class PhoneStatusBarPolicy implements Callback {
         }
     }
 
-    private final void updateVolumeZen() {
+    public final void updateVolumeZen() {
         AudioManager audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
 
         boolean zenVisible = false;
