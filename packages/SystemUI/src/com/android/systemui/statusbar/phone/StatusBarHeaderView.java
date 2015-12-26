@@ -435,17 +435,19 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     }
 
     private void updateSystemIconsLayoutParams() {
-        RelativeLayout.LayoutParams lp = (LayoutParams) mSystemIconsSuperContainer
-                .getLayoutParams();
-        int rule = mExpanded
-                ? mSettingsContainer.getId()
-                : mMultiUserSwitch.getId();
+        RelativeLayout.LayoutParams lp = (LayoutParams) mSystemIconsSuperContainer.getLayoutParams();
+/*        int rule = mExpanded
+                ? 
+                : mMultiUserSwitch.getId(); */
         int taskManager = mShowTaskManager && mExpanded
-                ? mTaskManagerButton.getId() : rule;
+                ? mTaskManagerButton.getId() : mSettingsContainer.getId();
+        int ruleTaskManager = mExpanded
+                ? taskManager
+                : mMultiUserSwitch.getId();
         if (taskManager != lp.getRules()[RelativeLayout.START_OF]) {
-            lp.addRule(RelativeLayout.START_OF, taskManager);
-            mSystemIconsSuperContainer.setLayoutParams(lp);
+            lp.addRule(RelativeLayout.START_OF, ruleTaskManager);
         }
+            mSystemIconsSuperContainer.setLayoutParams(lp);
     }
 
     private void updateListeners() {
