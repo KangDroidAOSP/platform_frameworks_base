@@ -162,6 +162,8 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private SettingsObserver mSettingsObserver;
     private boolean mShowWeather;
     private boolean mShowBatteryTextExpanded;
+
+    private QSTile.DetailAdapter mEditingDetailAdapter;
     private boolean mEditing;
 
     private ImageView mBackgroundImage;
@@ -771,13 +773,8 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
     public void setEditing(boolean editing) {
         mEditing = editing;
-        if (mEditing) {
-            mQsPanelCallback.onShowingDetail(new QSTile.DetailAdapter() {
-                @Override
-                public StatusBarPanelCustomTile getCustomTile() {
-                    return null;
-                }
-
+        if (mEditingDetailAdapter == null) {
+            mEditingDetailAdapter = new QSTile.DetailAdapter() {
                 @Override
                 public int getTitle() {
                     return R.string.quick_settings_edit_label;
@@ -799,6 +796,11 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
                 }
 
                 @Override
+                public StatusBarPanelCustomTile getCustomTile() {
+                    return null;
+                }
+
+                @Override
                 public void setToggleState(boolean state) {
 
                 }
@@ -807,10 +809,10 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
                 public int getMetricsCategory() {
                     return MetricsConstants.DONT_TRACK_ME_BRO;
                 }
-            });
-        } else {
-            mQsPanelCallback.onShowingDetail(null);
+            };
         }
+        mQsPanelCallback.onShowingDetail(mEditing ? mEditingDetailAdapter : null);
+        updateEverything();
     }
 
     /**
@@ -889,7 +891,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             post(new Runnable() {
                 @Override
                 public void run() {
-                    handleShowingDetail(detail);
+                    handleShowingDetail(mEditing && detail == null ? mEditingDetailAdapter : detail);
                 }
             });
         }
