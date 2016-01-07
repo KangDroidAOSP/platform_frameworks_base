@@ -1373,6 +1373,13 @@ public abstract class BaseStatusBar extends SystemUI implements
         mHandler.sendEmptyMessage(msg);
     }
 
+	@Override
+    public void screenPinningStateChanged(boolean enabled) {
+        if (mNavigationBarView != null) {
+            mNavigationBarView.screenPinningStateChanged(enabled);
+        }
+    }
+
     @Override
     public void toggleLastApp() {
         int msg = MSG_TOGGLE_LAST_APP;

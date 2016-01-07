@@ -82,5 +82,7 @@ oneway interface IStatusBar
     void onCameraLaunchGestureDetected(int source);
 
     void setAutoRotate(boolean enabled);
+
+    void screenPinningStateChanged(boolean enabled);
 }
 
