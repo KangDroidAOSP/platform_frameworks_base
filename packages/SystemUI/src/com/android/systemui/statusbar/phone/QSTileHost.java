@@ -460,7 +460,6 @@ public class QSTileHost implements QSTile.Host, Tunable {
         else if (spec.equals("screen_off")) return R.string.quick_settings_screen_off_label;
         else if (spec.equals("screenshot")) return R.string.quick_settings_screenshot_label;
         else if (spec.equals("expanded_desktop")) return R.string.quick_settings_expanded_desktop_label;
-        else if (spec.equals("reboot")) return R.string.quick_settings_reboot_label;
         return 0;
     }
 
@@ -494,7 +493,6 @@ public class QSTileHost implements QSTile.Host, Tunable {
         else if (spec.equals("screen_off")) return R.drawable.ic_qs_power;
         else if (spec.equals("screenshot")) return R.drawable.ic_qs_screenshot;
         else if (spec.equals("expanded_desktop")) return R.drawable.ic_qs_expanded_desktop;
-	else if (spec.equals("reboot")) return R.drawable.ic_qs_reboot;
         return 0;
     }
 
