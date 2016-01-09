@@ -69,10 +69,10 @@ public class StatusBarIconController implements Tunable {
     private DemoStatusIcons mDemoStatusIcons;
     private NotificationColorUtil mNotificationColorUtil;
 
-    private LinearLayout mSystemIconArea;
-    private LinearLayout mStatusIcons;
+    LinearLayout mSystemIconArea;
+    LinearLayout mStatusIcons;
     private SignalClusterView mSignalCluster;
-    private LinearLayout mStatusIconsKeyguard;
+    LinearLayout mStatusIconsKeyguard;
     private IconMerger mNotificationIcons;
     private View mNotificationIconArea;
     private ImageView mMoreIcon;
