@@ -563,11 +563,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     }
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CUSTOM_HEADER_DEFAULT))) {
-                    recreateStatusBar();
-                    updateRowStates();
-                    updateSpeedbump();
-                    updateClearAll();
-                    updateEmptyShadeView();
+						makeStatusBarView();
                     } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.USE_SLIM_RECENTS))) {
                 updateRecents();
