@@ -3857,17 +3857,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mStatusBarWindow.clearDisappearingChildren();
 
         RankingMap rankingMap = mNotificationData.getRankingMap();
-        // extract icons from the soon-to-be recreated viewgroup.
-        /*
-        int nIcons = mStatusIcons != null ? mStatusIcons.getChildCount() : 0;
+        // extract icons from the soon-to-be recreated viewgroup, TESTING
+/*        int nIcons = mStatusIcons != null ? mStatusIcons.getChildCount() : 0;
         ArrayList<StatusBarIcon> icons = new ArrayList<StatusBarIcon>(nIcons);
         ArrayList<String> iconSlots = new ArrayList<String>(nIcons);
         for (int i = 0; i < nIcons; i++) {
             StatusBarIconView iconView = (StatusBarIconView)mStatusIcons.getChildAt(i);
             icons.add(iconView.getStatusBarIcon());
             iconSlots.add(iconView.getStatusBarSlot());
-        }
-        */
+        } */
 
         removeAllViews(mStatusBarWindowContent);
 
@@ -3882,13 +3880,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         repositionNavigationBar();
 
         // recreate StatusBarIconViews.
-        /*
         for (int i = 0; i < nIcons; i++) {
             StatusBarIcon icon = icons.get(i);
             String slot = iconSlots.get(i);
             addIcon(slot, i, i, icon);
         }
-        */
 
         // recreate notifications.
         for (int i = 0; i < nNotifs; i++) {
