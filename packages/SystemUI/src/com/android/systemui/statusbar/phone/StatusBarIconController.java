@@ -190,6 +190,27 @@ public class StatusBarIconController implements Tunable {
         view.set(icon);
         applyIconTint();
     }
+	
+	public void updateKDPStatusBar() {
+        // extract icons from the soon-to-be recreated viewgroup, TESTING
+        int nIcons = mStatusIcons != null ? mStatusIcons.getChildCount() : 0;
+        ArrayList<StatusBarIcon> icons = new ArrayList<StatusBarIcon>(nIcons);
+        ArrayList<String> iconSlots = new ArrayList<String>(nIcons);
+        for (int i = 0; i < nIcons; i++) {
+            StatusBarIconView iconView = (StatusBarIconView)mStatusIcons.getChildAt(i);
+            icons.add(iconView.getStatusBarIcon());
+            iconSlots.add(iconView.getStatusBarSlot());
+        } 
+	}
+	
+	public void updateKDPHeader() {
+        // recreate StatusBarIconViews.
+        for (int i = 0; i < nIcons; i++) {
+            StatusBarIcon icon = icons.get(i);
+            String slot = iconSlots.get(i);
+            addIcon(slot, i, i, icon);
+        }
+	}
 
     public void removeSystemIcon(String slot, int index, int viewIndex) {
         mStatusIcons.removeViewAt(viewIndex);
