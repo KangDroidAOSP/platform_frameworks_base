@@ -242,6 +242,7 @@ public class NotificationPanelView extends PanelView implements
     private ComponentName mThirdPartyKeyguardViewComponent;
     private KeyguardExternalView mKeyguardExternalView;
     private CmLockPatternUtils mLockPatternUtils;
+    private boolean mLiveLockScreenEnabled;
 
     private Runnable mHeadsUpExistenceChangedRunnable = new Runnable() {
         @Override
@@ -2656,6 +2657,8 @@ public class NotificationPanelView extends PanelView implements
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_TRANSPARENT_SHADE),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(CMSettings.Secure.getUriFor(
+                    CMSettings.Secure.LIVE_LOCK_SCREEN_ENABLED), false, this);
             update();
         }
 
@@ -2685,6 +2688,12 @@ public class NotificationPanelView extends PanelView implements
                     UserHandle.USER_CURRENT) == 1;
             mQSShadeAlpha = Settings.System.getInt(
                     resolver, Settings.System.QS_TRANSPARENT_SHADE, 255);
+            boolean liveLockScreenEnabled = CMSettings.Secure.getInt(
+                    resolver, CMSettings.Secure.LIVE_LOCK_SCREEN_ENABLED, 0) == 1;
+            if (liveLockScreenEnabled != mLiveLockScreenEnabled) {
+                mLiveLockScreenEnabled = liveLockScreenEnabled;
+                updateExternalKeyguardView();
+            }
             setQSBackgroundAlpha();
         }
     }
@@ -2787,7 +2796,8 @@ public class NotificationPanelView extends PanelView implements
     }
 
     private void updateExternalKeyguardView() {
-        ComponentName cn = mLockPatternUtils.getThirdPartyKeyguardComponent();
+        ComponentName cn = mLiveLockScreenEnabled ?
+                mLockPatternUtils.getThirdPartyKeyguardComponent() : null;
         // If mThirdPartyKeyguardViewComponent differs from cn, go ahead and update
         if (!Objects.equals(mThirdPartyKeyguardViewComponent, cn)) {
             mThirdPartyKeyguardViewComponent = cn;
