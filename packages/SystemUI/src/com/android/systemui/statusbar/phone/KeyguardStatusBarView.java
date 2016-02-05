@@ -55,6 +55,7 @@ public class KeyguardStatusBarView extends RelativeLayout {
     private BatteryLevelTextView mBatteryLevel;
 
     private TextView mCarrierLabel;
+    private int mCarrierLabelSpot;
     private int mShowCarrierLabel;
 
     private BatteryController mBatteryController;
@@ -79,6 +80,8 @@ public class KeyguardStatusBarView extends RelativeLayout {
     private void showStatusBarCarrier() {
         mShowCarrierLabel = Settings.System.getIntForUser(getContext().getContentResolver(),
                 Settings.System.STATUS_BAR_SHOW_CARRIER, 1, UserHandle.USER_CURRENT);
+        mCarrierLabelSpot = Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.STATUS_BAR_CARRIER_SPOT, 0, UserHandle.USER_CURRENT);
     }
 
     @Override
@@ -130,6 +133,15 @@ public class KeyguardStatusBarView extends RelativeLayout {
         }
         mBatteryLevel.setVisibility(View.VISIBLE);
 
+        clearCarrierView();
+
+        if (mCarrierLabelSpot == 0) {
+            mCarrierLabel = (TextView) findViewById(R.id.left_keyguard_carrier_text);
+        }
+        if (mCarrierLabelSpot == 1) {
+            mCarrierLabel = (TextView) findViewById(R.id.keyguard_carrier_text);
+        }
+
         if (mCarrierLabel != null) {
             if (mShowCarrierLabel == 1) {
                 mCarrierLabel.setVisibility(View.VISIBLE);
@@ -139,6 +151,13 @@ public class KeyguardStatusBarView extends RelativeLayout {
                 mCarrierLabel.setVisibility(View.GONE);
             }
         }
+    }
+
+    public void clearCarrierView() {
+        mCarrierLabel = (TextView) findViewById(R.id.left_keyguard_carrier_text);
+        mCarrierLabel.setVisibility(View.GONE);
+        mCarrierLabel = (TextView) findViewById(R.id.keyguard_carrier_text);
+        mCarrierLabel.setVisibility(View.GONE);
     }
 
     private void updateSystemIconsLayoutParams() {
@@ -262,5 +281,7 @@ public class KeyguardStatusBarView extends RelativeLayout {
         super.onAttachedToWindow();
         getContext().getContentResolver().registerContentObserver(Settings.System.getUriFor(
                 "status_bar_show_carrier"), false, mObserver);
+        getContext().getContentResolver().registerContentObserver(Settings.System.getUriFor(
+                "status_bar_carrier_spot"), false, mObserver);
     }
 }
