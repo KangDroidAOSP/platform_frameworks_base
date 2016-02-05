@@ -4757,22 +4757,10 @@ public final class Settings {
         public static final String COLOR_PICKER_PALETTE = "color_picker_palette";
 
         /**
-         * Transparent qs shade
-         * @hide
-         */
-        public static final String QS_TRANSPARENT_SHADE = "qs_transparent_shade";
-
-        /**
          * Whether to prevent loud volume levels when headset is first plugged in.
          * @hide
          */
         public static final String SAFE_HEADSET_VOLUME = "safe_headset_volume";
-			
-        /**
-         * Transparent qs header
-         * @hide
-         */
-        public static final String QS_TRANSPARENT_HEADER = "qs_transparent_header";
 
         /**
          * Whether to display dashboard tiles in a double line layout
@@ -4785,6 +4773,36 @@ public final class Settings {
          * @hide
          */
         public static final String DASHBOARD_COLUMNS = "dashboard_columns";
+			
+        /**
+         * Color of the text on the header of the expanded status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_HEADER_TEXT_COLOR = "status_bar_expanded_header_text_color";
+
+        /**
+         * Color of the icons on the header of the expanded status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_HEADER_ICON_COLOR = "status_bar_expanded_header_icon_color";  
+			
+        /**
+         * Color of the expanded status bar header background
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_HEADER_BG_COLOR = "status_bar_expanded_header_bg_color";
+			
+		/**
+         * Color of the quick settings panel background
+         * @hide
+         */
+        public static final String QS_BACKGROUND_COLOR = "qs_background_color";
+			
+        /**
+         * Transparent shade
+         * @hide
+         */
+        public static final String QS_TRANSPARENT_SHADE = "qs_transparent_shade";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings

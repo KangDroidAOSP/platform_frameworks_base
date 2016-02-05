@@ -36,8 +36,6 @@ import android.content.res.Configuration;
 import android.database.ContentObserver;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.PorterDuff.Mode;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.net.Uri;
@@ -264,13 +262,13 @@ public class NotificationPanelView extends PanelView implements
     private int mStatusBarHeaderHeight;
     private GestureDetector mDoubleTapGesture;
 
-    // QS alpha
-    private int mQSShadeAlpha;
-
     // Task manager
     private boolean mShowTaskManager;
     private boolean mTaskManagerShowing;
     private LinearLayout mTaskManagerPanel;
+	
+    private int mQSBackgroundColor;
+    private boolean mQSShadeTransparency = false;
 
     public NotificationPanelView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -286,6 +284,7 @@ public class NotificationPanelView extends PanelView implements
                 return true;
             }
         });
+		setQSBackgroundColor();
     }
 
     public void setStatusBar(PhoneStatusBar bar) {
@@ -337,7 +336,6 @@ public class NotificationPanelView extends PanelView implements
                 }
             }
         });
-        setQSBackgroundAlpha();
 
         mLockPatternUtils = new CmLockPatternUtils(getContext());
         if (mLockPatternUtils.isThirdPartyKeyguardEnabled()) {
@@ -1781,13 +1779,13 @@ public class NotificationPanelView extends PanelView implements
                 // In Shade, interpolate linearly such that QS is closed whenever panel height is
                 // minimum QS expansion + minStackHeight
                 float panelHeightQsCollapsed = mNotificationStackScroller.getIntrinsicPadding()
-                        + mNotificationStackScroller.getMinStackHeight();
+                     mNotificationStackScroller.getMinStackHeight();
                 float panelHeightQsExpanded = calculatePanelHeightQsExpanded();
                 t = (expandedHeight - panelHeightQsCollapsed)
                         / (panelHeightQsExpanded - panelHeightQsCollapsed);
             }
             setQsExpansion(mQsMinExpansionHeight
-                    + t * (getTempQsMaxExpansion() - mQsMinExpansionHeight));
+                 t * (getTempQsMaxExpansion() - mQsMinExpansionHeight));
         }
         updateStackHeight(expandedHeight);
         updateHeader();
@@ -1840,8 +1838,8 @@ public class NotificationPanelView extends PanelView implements
         if (mNotificationStackScroller.getNotGoneChildCount() == 0
                 && mShadeEmpty) {
             notificationHeight = mNotificationStackScroller.getEmptyShadeViewHeight()
-                    + mNotificationStackScroller.getBottomStackPeekSize()
-                    + mNotificationStackScroller.getCollapseSecondCardPadding();
+                 mNotificationStackScroller.getBottomStackPeekSize()
+                 mNotificationStackScroller.getCollapseSecondCardPadding();
         }
         int maxQsHeight = mQsMaxExpansionHeight;
 
@@ -1854,11 +1852,11 @@ public class NotificationPanelView extends PanelView implements
                 mStatusBarState == StatusBarState.KEYGUARD
                         ? mClockPositionResult.stackScrollerPadding - mTopPaddingAdjustment
                         : 0)
-                + notificationHeight;
+             notificationHeight;
         if (totalHeight > mNotificationStackScroller.getHeight()) {
             float fullyCollapsedHeight = maxQsHeight
-                    + mNotificationStackScroller.getMinStackHeight()
-                    + mNotificationStackScroller.getNotificationTopPadding()
+                 mNotificationStackScroller.getMinStackHeight()
+                 mNotificationStackScroller.getNotificationTopPadding()
                     - getScrollViewScrollY();
             totalHeight = Math.max(fullyCollapsedHeight, mNotificationStackScroller.getHeight());
         }
@@ -2654,11 +2652,12 @@ public class NotificationPanelView extends PanelView implements
             resolver.registerContentObserver(Settings.Secure.getUriFor(
                     Settings.Secure.STATUS_BAR_LOCKED_ON_SECURE_KEYGUARD),
                     false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.QS_TRANSPARENT_SHADE),
-                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(CMSettings.Secure.getUriFor(
                     CMSettings.Secure.LIVE_LOCK_SCREEN_ENABLED), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_TRANSPARENT_SHADE), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_BACKGROUND_COLOR), false, this);
             update();
         }
 
@@ -2674,7 +2673,18 @@ public class NotificationPanelView extends PanelView implements
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
-            update();
+            ContentResolver resolver = mContext.getContentResolver();
+                if (uri.equals(Settings.System.getUriFor(
+                        Settings.System.QS_BACKGROUND_COLOR))
+                    || uri.equals(Settings.System.getUriFor(
+                        Settings.System.QS_TRANSPARENT_SHADE))) {
+                    mQSBackgroundColor = Settings.System.getInt(
+                            resolver, Settings.System.QS_BACKGROUND_COLOR, 0xff263238);
+                    mQSShadeTransparency = Settings.System.getInt(
+                            resolver, Settings.System.QS_TRANSPARENT_SHADE, 0) == 1;
+                    setQSBackgroundColor();
+            }
+			update();
         }
 
         public void update() {
@@ -2686,26 +2696,39 @@ public class NotificationPanelView extends PanelView implements
             mStatusBarLockedOnSecureKeyguard = Settings.Secure.getIntForUser(
                     resolver, Settings.Secure.STATUS_BAR_LOCKED_ON_SECURE_KEYGUARD, 1,
                     UserHandle.USER_CURRENT) == 1;
-            mQSShadeAlpha = Settings.System.getInt(
-                    resolver, Settings.System.QS_TRANSPARENT_SHADE, 255);
+			mQSBackgroundColor = Settings.System.getInt(
+                    resolver, Settings.System.QS_BACKGROUND_COLOR, 0xff263238);
+            mQSShadeTransparency = Settings.System.getInt(
+                    resolver, Settings.System.QS_TRANSPARENT_SHADE, 0) == 1;
             boolean liveLockScreenEnabled = CMSettings.Secure.getInt(
                     resolver, CMSettings.Secure.LIVE_LOCK_SCREEN_ENABLED, 0) == 1;
             if (liveLockScreenEnabled != mLiveLockScreenEnabled) {
                 mLiveLockScreenEnabled = liveLockScreenEnabled;
                 updateExternalKeyguardView();
             }
-            setQSBackgroundAlpha();
+			setQSBackgroundColor();
         }
     }
-
-    private void setQSBackgroundAlpha() {
+	
+    private void setQSBackgroundColor() {
+        ContentResolver resolver = mContext.getContentResolver();
+        mQSBackgroundColor = Settings.System.getInt(
+                resolver, Settings.System.QS_BACKGROUND_COLOR, 0xff263238);
+        mQSShadeTransparency = Settings.System.getInt(mContext.getContentResolver(),
+            Settings.System.QS_TRANSPARENT_SHADE, 0) == 1;
         if (mQsContainer != null) {
-            mQsContainer.getBackground().setAlpha(mQSShadeAlpha);
+            if (mQSShadeTransparency) {
+                mQsContainer.getBackground().setColorFilter(
+                        mQSBackgroundColor, Mode.MULTIPLY);
+            } else {
+                mQsContainer.getBackground().setColorFilter(
+                        mQSBackgroundColor, Mode.SRC_OVER);
+            }
         }
-        if (mQsPanel != null) {
-            mQsPanel.setQSShadeAlphaValue(mQSShadeAlpha);
-        }
-    }
+    if (mQsPanel != null) {
+         mQsPanel.setDetailBackgroundColor(mQSBackgroundColor);
+          }
+      }
 
     @Override
     public boolean hasOverlappingRendering() {
