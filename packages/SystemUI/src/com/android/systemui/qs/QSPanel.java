@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.content.ContentResolver;
 import android.os.Handler;
 import android.os.Message;
 import android.os.UserHandle;
@@ -34,6 +35,9 @@ import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.graphics.PorterDuff.Mode;
+import android.net.Uri;
+import android.graphics.Point;
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.systemui.FontSizeUtils;
@@ -43,6 +47,7 @@ import com.android.systemui.settings.BrightnessController;
 import com.android.systemui.settings.ToggleSlider;
 import com.android.systemui.statusbar.phone.QSTileHost;
 import com.android.systemui.statusbar.policy.BrightnessMirrorController;
+import com.android.systemui.cm.UserContentObserver;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -84,6 +89,10 @@ public class QSPanel extends ViewGroup {
 
     protected QSFooter mFooter;
     protected boolean mGridContentVisible = true;
+	
+	private boolean mQSShadeTransparency = false;
+	
+	private SettingsObserver mSettingsObserver;
 
     public QSPanel(Context context) {
         this(context, null);
@@ -113,6 +122,7 @@ public class QSPanel extends ViewGroup {
         addView(mBrightnessView);
         addView(mFooter.getView());
         mClipper = new QSDetailClipper(mDetail);
+		mSettingsObserver = new SettingsObserver(mHandler);
         updateResources();
 
         mBrightnessController = new BrightnessController(getContext(),
@@ -127,6 +137,42 @@ public class QSPanel extends ViewGroup {
                 closeDetail();
             }
         });
+		
+        final SettingsObserver settingsObserver = new SettingsObserver(new Handler());
+        settingsObserver.observe();
+    }
+	
+    private class SettingsObserver extends UserContentObserver {
+
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void observe() {
+            super.observe();
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_TRANSPARENT_SHADE),
+                    false, this, UserHandle.USER_ALL);
+            update();
+
+            onChange(false);
+        }
+
+        @Override
+        protected void unobserve() {
+            super.unobserve();
+            mContext.getContentResolver().unregisterContentObserver(this);
+        }
+
+        @Override
+        protected void update() {
+            ContentResolver resolver = mContext.getContentResolver();		
+            mQSShadeTransparency = Settings.System.getIntForUser(resolver,
+				Settings.System.QS_TRANSPARENT_SHADE,
+                0, UserHandle.USER_CURRENT) == 1;			
+        }
     }
 
     /**
@@ -209,6 +255,7 @@ public class QSPanel extends ViewGroup {
         }
         if (mListening) {
             refreshAllTiles();
+			mSettingsObserver.observe();
         }
         updateDetailText();
     }
@@ -251,6 +298,9 @@ public class QSPanel extends ViewGroup {
         mFooter.setListening(mListening);
         if (mListening) {
             refreshAllTiles();
+			mSettingsObserver.observe();
+        } else {
+            mSettingsObserver.unobserve();
         }
         if (listening && showBrightnessSlider()) {
             mBrightnessController.registerCallbacks();
@@ -591,7 +641,7 @@ public class QSPanel extends ViewGroup {
     protected int getRowTop(int row) {
         if (row <= 0) return mBrightnessView.getMeasuredHeight() + mBrightnessPaddingTop;
         return mBrightnessView.getMeasuredHeight() + mBrightnessPaddingTop
-                + mLargeCellHeight - mDualTileUnderlap + (row - 1) * mCellHeight;
+             + mLargeCellHeight - mDualTileUnderlap + (row - 1) * mCellHeight;
     }
 
     private int getColumnCount(int row) {
@@ -628,11 +678,19 @@ public class QSPanel extends ViewGroup {
                 && ((TileRecord) mDetailRecord).scanState;
         fireScanStateChanged(scanState);
     }
-
-    public void setQSShadeAlphaValue(int alpha) {
-        if (mDetail != null) {
-            mDetail.getBackground().setAlpha(alpha);
-        }
+	
+    public void setDetailBackgroundColor(int color) {
+        mQSShadeTransparency = Settings.System.getInt(mContext.getContentResolver(),
+            Settings.System.QS_TRANSPARENT_SHADE, 0) == 1;
+            if (mDetail != null) {
+                if (mQSShadeTransparency) {
+                    mDetail.getBackground().setColorFilter(
+                            color, Mode.MULTIPLY);
+                } else {
+                    mDetail.getBackground().setColorFilter(
+                            color, Mode.SRC_OVER);
+                }
+            }
     }
 
     private class H extends Handler {
