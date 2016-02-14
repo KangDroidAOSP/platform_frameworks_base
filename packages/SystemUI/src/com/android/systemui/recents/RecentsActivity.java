@@ -33,6 +33,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewStub;
 import android.widget.Toast;
+import android.provider.Settings;
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.systemui.Prefs;
