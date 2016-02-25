@@ -4973,6 +4973,24 @@ public final class Settings {
          */
         public static final String TRANSPARENT_VOLUME_DIALOG = "transparent_volume_dialog";
 
+        /** Whether to vibrate when quick settings tile is pressed.
+         *
+         * @hide
+         */
+        public static final String QUICK_SETTINGS_TILES_VIBRATE = "quick_settings_vibrate";
+
+        /** Whether to vibrate when quick settings tile is Single pressed.
+         *
+         * @hide
+         */
+        public static final String QUICK_SETTINGS_SP_VIBRATE = "quick_settings_sp_vibrate";
+
+        /** Whether to vibrate when Settings icon is pressed.
+         *
+         * @hide
+         */
+        public static final String QUICK_SETTINGS_ICON_VIBRATE = "quick_settings_icon_vibrate";
+
         /**
          * Volume dialog stroke
          * 0 = disabled
