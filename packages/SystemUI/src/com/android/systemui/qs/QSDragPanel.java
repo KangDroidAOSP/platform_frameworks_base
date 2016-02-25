@@ -36,6 +36,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.UserHandle;
 import android.provider.Settings;
+import android.os.Vibrator;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.ArrayMap;
@@ -121,6 +122,9 @@ public class QSDragPanel extends QSPanel implements View.OnDragListener, View.On
     private int addRows;
     private int moreSlots;
 
+    protected Vibrator mVibrator;
+    private boolean mQsVibSignlepress = false;		
+
     private boolean mRestored;
     private boolean mRestoring;
     // whether the current view we are dragging in has shifted tiles
@@ -161,9 +165,13 @@ public class QSDragPanel extends QSPanel implements View.OnDragListener, View.On
         mDetailRemoveButton = (TextView) mDetail.findViewById(android.R.id.button3);
         mDetailSettingsButton = (TextView) mDetail.findViewById(android.R.id.button2);
         mDetailDoneButton = (TextView) mDetail.findViewById(android.R.id.button1);
+	mVibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
         updateDetailText();
         mDetail.setVisibility(GONE);
         mDetail.setClickable(true);
+
+	mQsVibSignlepress = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.QUICK_SETTINGS_SP_VIBRATE, 0) == 1;
 
         mQsPanelTop = (QSPanelTopView) LayoutInflater.from(mContext).inflate(R.layout.qs_tile_top,
                 this, false);
@@ -203,6 +211,7 @@ public class QSDragPanel extends QSPanel implements View.OnDragListener, View.On
                 announceForAccessibility(
                         mContext.getString(R.string.accessibility_desc_quick_settings));
                 closeDetail();
+		vibrateTile(20);
             }
         });
 
@@ -557,6 +566,18 @@ public class QSDragPanel extends QSPanel implements View.OnDragListener, View.On
         return getPagesForCount(initialSize);
     }
 
+    public boolean isVibrationEnabled() {
+        return (Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.QUICK_SETTINGS_TILES_VIBRATE, 0, UserHandle.USER_CURRENT) == 1);
+    }
+
+    public void vibrateTile(int duration) {
+        if (!isVibrationEnabled()) { return; }
+        if (mVibrator != null) {
+            if (mVibrator.hasVibrator()) { mVibrator.vibrate(duration); }
+        }
+    }
+
     @Override
     protected void updateDetailText() {
         super.updateDetailText();
@@ -787,8 +808,15 @@ public class QSDragPanel extends QSPanel implements View.OnDragListener, View.On
             @Override
             public void onClick(View v) {
                 if (!mEditing || r.tile instanceof EditTile) {
+		mQsVibSignlepress = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.QUICK_SETTINGS_SP_VIBRATE, 0) == 1;
                     r.tile.click();
                     setAnimationTile(r);
+				if (mQsVibSignlepress) {
+			  	    vibrateTile(20);	
+				   } else {
+				    vibrateTile(0);
+				   }
                 }
             }
         };
@@ -798,18 +826,26 @@ public class QSDragPanel extends QSPanel implements View.OnDragListener, View.On
                 if (!mEditing) {
                     r.tile.secondaryClick();
                     setAnimationTile(r);
+					mQsVibSignlepress = Settings.System.getInt(mContext.getContentResolver(),
+			                Settings.System.QUICK_SETTINGS_SP_VIBRATE, 0) == 1;
+			                    r.tile.click();
+						if (mQsVibSignlepress) {
+				  	    vibrateTile(20);	
+					   } else {
+					    vibrateTile(0);
+					   }	
                 }
             }
         };
         final OnLongClickListener longClick = new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (!mEditing) {
+                if (!mEditing) {	
                     r.tile.longClick();
                     setAnimationTile(r);
                 } else {
                     QSDragPanel.this.onLongClick(r.tileView);
-                }
+                }	
                 return true;
             }
         };
@@ -1527,6 +1563,7 @@ public class QSDragPanel extends QSPanel implements View.OnDragListener, View.On
         mDragging = true;
         return true;
     }
+
 
     private void shiftTiles(DragTileRecord startingTile, boolean forward) {
         if (DEBUG_DRAG) {
