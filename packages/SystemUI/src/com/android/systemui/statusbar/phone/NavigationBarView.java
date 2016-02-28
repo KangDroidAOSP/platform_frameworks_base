@@ -67,9 +67,8 @@ import com.android.systemui.R;
 import com.android.systemui.cm.UserContentObserver;
 import com.android.systemui.statusbar.policy.DeadZone;
 import com.android.systemui.statusbar.policy.KeyButtonView;
-import com.android.internal.navigation.BaseNavigationBar;
-import com.android.internal.navigation.StatusbarImpl;
-import com.android.internal.navigation.BarTransitions;
+import com.android.systemui.navigation.BaseNavigationBar;
+import com.android.systemui.statusbar.BarTransitions;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -229,7 +228,8 @@ public class NavigationBarView extends BaseNavigationBar {
     }
 
     @Override
-    public void setStatusBarCallbacks(StatusbarImpl statusbar) {
+    public void setStatusBar(PhoneStatusBar statusbar) {
+        super.setStatusBar(statusbar);
         mTaskSwitchHelper.setBar(statusbar);
     }
 
