@@ -17,8 +17,10 @@
 package com.android.systemui.qs;
 
 import android.content.Context;
+import android.content.ContentResolver;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
+import android.graphics.PorterDuff.Mode;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -32,6 +34,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.provider.Settings;
 
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
@@ -55,6 +58,7 @@ public class QSDetailItems extends FrameLayout {
     private TextView mEmptyText;
     private ImageView mEmptyIcon;
     private int mMaxItems;
+	private int mIconColor;
 
     public QSDetailItems(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -106,8 +110,10 @@ public class QSDetailItems extends FrameLayout {
     }
 
     public void setEmptyState(int icon, int text) {
+		updateColors();
         mEmptyIcon.setImageResource(icon);
         mEmptyText.setText(text);
+        mEmptyIcon.setColorFilter(mIconColor, Mode.MULTIPLY);
     }
 
     /**
@@ -180,6 +186,7 @@ public class QSDetailItems extends FrameLayout {
         view.setVisibility(mItemsVisible ? VISIBLE : INVISIBLE);
         final ImageView iv = (ImageView) view.findViewById(android.R.id.icon);
         iv.setImageResource(item.icon);
+		iv.setColorFilter(mIconColor, Mode.MULTIPLY);
         iv.getOverlay().clear();
         if (item.overlay != null) {
             item.overlay.setBounds(0, 0, item.overlay.getIntrinsicWidth(),
@@ -211,6 +218,12 @@ public class QSDetailItems extends FrameLayout {
                 }
             }
         });
+    }
+	
+    private void updateColors() {
+        final ContentResolver resolver = mContext.getContentResolver();
+            mIconColor = Settings.System.getInt(resolver,
+                    Settings.System.QS_ICON_COLOR, 0xffffffff);
     }
 
     private class H extends Handler {
