@@ -181,6 +181,9 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 	
     private int mTextColor;
     private int mIconColor;
+	
+	//Statusbar Header master modification switch
+	private boolean mKDPStatusBarHeaderSwitch;
 
     // Font style
     public static final int FONT_NORMAL = 0;
@@ -217,6 +220,9 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+		ContentResolver resolver = mContext.getContentResolver();
+		mKDPStatusBarHeaderSwitch = Settings.System.getInt(resolver,
+			Settings.System.STATUS_BAR_HEADER_MASTER_SWITCH, 0) == 1;
         mSystemIconsSuperContainer = findViewById(R.id.system_icons_super_container);
         mSystemIconsContainer = (ViewGroup) findViewById(R.id.system_icons_container);
         mSystemIconsSuperContainer.setOnClickListener(this);
@@ -253,14 +259,17 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mEditTileDoneText = (TextView) findViewById(R.id.done);
         mSettingsObserver = new SettingsObserver(new Handler());
         mBackgroundImage = (ImageView) findViewById(R.id.background_image);
+		ContentResolver resolver = mContext.getContentResolver();
         loadDimens();
         updateVisibilities();
         updateClockScale();
         updateAvatarScale();
         setStatusBarHeaderFontStyle(mStatusBarHeaderFontStyle);
-        updateTextColor();
-        updateIconColor();
-        updateBackgroundColor();
+		if (mKDPStatusBarHeaderSwitch) {
+	        updateTextColor();
+	        updateIconColor();
+	        updateBackgroundColor();
+		}
         addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View v, int left, int top, int right,
@@ -460,9 +469,11 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         updateAvatarScale();
         updateClockLp();
         requestCaptureValues();
-        updateTextColor();
-        updateIconColor();
-        updateBackgroundColor();
+		if (mKDPStatusBarHeaderSwitch) {
+	        updateTextColor();
+	        updateIconColor();
+	        updateBackgroundColor();
+		}
     }
 
     void setTaskManagerEnabled(boolean enabled) {
@@ -1197,9 +1208,11 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
                     Settings.System.STATUS_BAR_EXPANDED_HEADER_ICON_COLOR, 0xffffffff);
             updateVisibilities();
             requestCaptureValues();
-            updateTextColor();
-            updateIconColor();
-			updateBackgroundColor();
+			if (mKDPStatusBarHeaderSwitch) {
+		        updateTextColor();
+		        updateIconColor();
+		        updateBackgroundColor();
+			}
         }
     }
 	

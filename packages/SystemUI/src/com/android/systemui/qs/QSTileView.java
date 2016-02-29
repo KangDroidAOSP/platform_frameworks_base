@@ -20,6 +20,7 @@ package com.android.systemui.qs;
 import android.annotation.Nullable;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.ContentResolver;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -68,6 +69,7 @@ public class QSTileView extends ViewGroup {
     private int mTilePaddingBelowIconPx;
     private final int mDualTileVerticalPaddingPx;
     private final View mTopBackgroundView;
+	private int mIconColor;
 
     private TextView mLabel;
     private QSDualTileLabel mDualLabel;
@@ -251,6 +253,24 @@ public class QSTileView extends ViewGroup {
         mTopBackgroundView.setBackground(mDual ? mTileBackground : null);
         setBackground(!mDual ? mTileBackground : null);
     }
+	
+    protected void updateColors() {
+        final ContentResolver resolver = mContext.getContentResolver();
+            mIconColor = Settings.System.getInt(resolver,
+                    Settings.System.QS_ICON_COLOR, 0xffffffff);
+    }
+
+    public void setIconColor() {
+        if (mIcon instanceof ImageView) {
+            updateColors();
+            ImageView iv = (ImageView) mIcon;
+            iv.setColorFilter(mIconColor, Mode.MULTIPLY);
+        }
+    }
+
+    protected int getIconColor() {
+		return mIconColor;
+	}
 
     private void setRipple(RippleDrawable tileBackground) {
         mRipple = tileBackground;
@@ -267,9 +287,11 @@ public class QSTileView extends ViewGroup {
     }
 
     protected View createIcon() {
+		updateColors();
         final ImageView icon = new ImageView(mContext);
         icon.setId(android.R.id.icon);
         icon.setScaleType(ScaleType.CENTER_INSIDE);
+		icon.setColorFilter(mIconColor, Mode.MULTIPLY);
         return icon;
     }
 
