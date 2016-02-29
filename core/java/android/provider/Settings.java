@@ -4896,7 +4896,13 @@ public final class Settings {
          * Color of the expanded status bar header background
          * @hide
          */
-        public static final String STATUS_BAR_EXPANDED_HEADER_BG_COLOR = "status_bar_expanded_header_bg_color";		
+        public static final String STATUS_BAR_EXPANDED_HEADER_BG_COLOR = "status_bar_expanded_header_bg_color";	
+		
+        /**
+         * Color of the quick settings icons
+         * @hide
+         */
+        public static final String QS_ICON_COLOR = "qs_icons_color";		
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
