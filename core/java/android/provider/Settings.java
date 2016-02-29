@@ -5122,6 +5122,12 @@ public final class Settings {
          * @hide
          */
         public static final String QS_BRIGHTNESS_ICON_COLOR = "qs_brightness_icon_color";
+			
+        /**
+         * Whether to show the battery bar
+         * @hide
+         */
+        public static final String STATUSBAR_COLOR_SWITCH = "statusbar_color_switch";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
