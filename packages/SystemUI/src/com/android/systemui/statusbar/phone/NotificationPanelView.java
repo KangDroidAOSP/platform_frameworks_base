@@ -3202,7 +3202,7 @@ public class NotificationPanelView extends PanelView implements
 
 		if (mQsContainer != null) {
                		 mQsContainer.getBackground().setColorFilter(
-                         mStockBg, Mode.SRC_IN);
+                         mStockBg, Mode.SRC_OVER);
            		 }
        		if (mQsPanel != null) {
             		mQsPanel.setDetailBackgroundColor(mStockBg);
