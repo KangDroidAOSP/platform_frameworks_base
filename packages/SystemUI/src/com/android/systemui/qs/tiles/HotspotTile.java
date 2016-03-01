@@ -78,7 +78,9 @@ public class HotspotTile extends QSTile<QSTile.BooleanState> {
     }
 
     @Override
-    protected void handleClick() {
+    protected void handleClick() {	
+	boolean mQSCSwitch = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.QS_COLOR_SWITCH, 0) == 1;
         boolean airplaneMode = (Settings.Global.getInt(mContext.getContentResolver(),
                 Settings.Global.AIRPLANE_MODE_ON, 0) == 1);
         if (airplaneMode) {
@@ -93,8 +95,13 @@ public class HotspotTile extends QSTile<QSTile.BooleanState> {
         final boolean isEnabled = (Boolean) mState.value;
         MetricsLogger.action(mContext, getMetricsCategory(), !isEnabled);
         mController.setHotspotEnabled(!isEnabled);
+       if (!mQSCSwitch) {
         mEnable.setAllowAnimation(true);
         mDisable.setAllowAnimation(true);
+	} else {
+	 mEnable.setAllowAnimation(false);
+	  mDisable.setAllowAnimation(false);
+	}
     }
 
     @Override
@@ -104,7 +111,9 @@ public class HotspotTile extends QSTile<QSTile.BooleanState> {
 
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
-        state.visible = mController.isHotspotSupported();
+	   boolean mQSCSwitch = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.QS_COLOR_SWITCH, 0) == 1;
+       state.visible = mController.isHotspotSupported();
 
         if (arg instanceof Boolean) {
             state.value = (boolean) arg;
@@ -118,7 +127,11 @@ public class HotspotTile extends QSTile<QSTile.BooleanState> {
         } else {
             state.label = mContext.getString(R.string.quick_settings_hotspot_label);
         }
+	 if (mQSCSwitch) {
+	state.icon = ResourceIcon.get(R.drawable.ic_qs_hotspot_on);
+	} else {
         state.icon = state.visible && state.value ? mEnable : mDisable;
+	}
     }
 
     @Override
