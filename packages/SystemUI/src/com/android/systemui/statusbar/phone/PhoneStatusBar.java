@@ -676,15 +676,19 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 	                updateNotificationIconsColor();
 			}  else if (uri.equals(Settings.System.getUriFor(
                      Settings.System.STATUSBAR_COLOR_SWITCH))) {
-		                 recreateStatusBar();
-		                 updateRowStates();
-		                 updateSpeedbump();
-		                 updateClearAll();
-		                 updateEmptyShadeView();
-						 
+	                 recreateStatusBar();
+	                 updateRowStates();
+	                 updateSpeedbump();
+	                 updateClearAll();
+	                 updateEmptyShadeView();
   	  	    }  else if (uri.equals(Settings.System.getUriFor(
                      Settings.System.QS_COLOR_SWITCH))) {
-						 updateQsColors();
+					 recreateStatusBar();
+					 updateRowStates();
+					 updateSpeedbump();
+					 updateClearAll();
+					 updateEmptyShadeView();
+					 updateQsColors();
  	  	    } else if (uri.equals(Settings.System.getUriFor(
                      Settings.System.QS_HEADER_TEXT_COLOR))
                      || uri.equals(Settings.System.getUriFor(
@@ -693,7 +697,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                      Settings.System.QS_ICON_COLOR))
                      || uri.equals(Settings.System.getUriFor(
                      Settings.System.QS_BACKGROUND_COLOR))) {
-            	   	  	updateQsColors();
+           	   	  	updateQsColors();
              }  
             update();
         }
