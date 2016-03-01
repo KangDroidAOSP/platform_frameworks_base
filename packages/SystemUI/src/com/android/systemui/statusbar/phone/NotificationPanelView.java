@@ -25,7 +25,7 @@ import android.animation.ValueAnimator;
 import android.content.ContentResolver;
 import android.app.ActivityManager;
 import android.app.StatusBarManager;
-import android.content.ContentResolver;
+import android.content.res.Resources;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ResolveInfo;
@@ -571,9 +571,7 @@ public class NotificationPanelView extends PanelView implements
         setQSBackgroundAlpha();
 	mQsColorSwitch = Settings.System.getInt(getContext().getContentResolver(),
                 Settings.System.QS_COLOR_SWITCH, 0) == 1;
-        if (mQsColorSwitch) {
             setQSBackgroundColor();
-        }
 
         mLockPatternUtils = new CmLockPatternUtils(getContext());
     }
@@ -2887,6 +2885,12 @@ public class NotificationPanelView extends PanelView implements
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_SMART_PULLDOWN),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_COLOR_SWITCH),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_BACKGROUND_COLOR),
+                    false, this, UserHandle.USER_ALL);
             update();
         }
 
@@ -2903,20 +2907,28 @@ public class NotificationPanelView extends PanelView implements
         @Override
         public void onChange(boolean selfChange, Uri uri) {
 	   ContentResolver resolver = mContext.getContentResolver();
-            update();
+
 	  if (uri.equals(Settings.System.getUriFor(
                         Settings.System.QS_HEADER_TEXT_COLOR))
                     || uri.equals(Settings.System.getUriFor(
                         Settings.System.QS_HEADER_COLOR))) {
-                    mQSBackgroundColor = Settings.System.getInt(
-                            resolver, Settings.System.QS_BACKGROUND_COLOR, 0xff263238);
+
                     setQSBackgroundColor();
                 } else if (uri.equals(Settings.System.getUriFor(
                         Settings.System.QS_ICON_COLOR))
                     || uri.equals(Settings.System.getUriFor(
                         Settings.System.QS_TEXT_COLOR))) {
                     setQSColors();
-                }
+                }  else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.QS_COLOR_SWITCH))) {
+                setQSBackgroundColor();
+		setQSColors();
+		} else if (uri.equals(Settings.System.getUriFor(
+                        Settings.System.QS_BACKGROUND_COLOR))) {
+		    setQSBackgroundColor();
+                    setQSColors();
+                } 
+		update();
         }
 
         public void update() {
@@ -2932,10 +2944,8 @@ public class NotificationPanelView extends PanelView implements
 	                    resolver, Settings.System.QS_COLOR_SWITCH, 0) == 1;
 	            int mQSBackgroundColor = Settings.System.getInt(
 	                    resolver, Settings.System.QS_BACKGROUND_COLOR, 0xff263238);
-		    if (mQsColorSwitch) {
 	                setQSBackgroundColor();
 	                setQSColors();
-	            }
             mQSShadeAlpha = Settings.System.getInt(
                     resolver, Settings.System.QS_TRANSPARENT_SHADE, 255);
             mQsSmartPullDown = Settings.System.getIntForUser(
@@ -3169,20 +3179,37 @@ public class NotificationPanelView extends PanelView implements
                 mStatusBarState == StatusBarState.KEYGUARD;
     }
 
- private void setQSBackgroundColor() {
+ public void setQSBackgroundColor() {
+	final Resources res = getContext().getResources();
         ContentResolver resolver = mContext.getContentResolver();
+	int mStockBg = res.getColor(R.color.quick_settings_panel_background);
+	mQsColorSwitch = Settings.System.getInt(mContext.getContentResolver(),
+		Settings.System.QS_COLOR_SWITCH, 0) == 1;
         int mQSBackgroundColor = Settings.System.getInt( mContext.getContentResolver(), 
 			Settings.System.QS_BACKGROUND_COLOR, 0xff263238);
-        if (mQsContainer != null) {
-                mQsContainer.getBackground().setColorFilter(
-                        mQSBackgroundColor, Mode.SRC_OVER);
-            }
-        if (mQsPanel != null) {
-            mQsPanel.setDetailBackgroundColor(mQSBackgroundColor);
-        }
+	if (mQsColorSwitch) {
+        	if (mQsContainer != null) {
+               		 mQsContainer.getBackground().setColorFilter(
+                         mQSBackgroundColor, Mode.SRC_OVER);
+           		 }
+       		if (mQsPanel != null) {
+            		mQsPanel.setDetailBackgroundColor(mQSBackgroundColor);
+       			 }
+		} else {
+
+		if (mQsContainer != null) {
+               		 mQsContainer.getBackground().setColorFilter(
+                         mStockBg, Mode.SRC_OVER);
+           		 }
+       		if (mQsPanel != null) {
+            		mQsPanel.setDetailBackgroundColor(mStockBg);
+       			 }
+		}
+
+	
     }
 
-    private void setQSColors() {
+    public void setQSColors() {
         if (mQsPanel != null) {
             mQsPanel.refreshAllTiles();
         }
