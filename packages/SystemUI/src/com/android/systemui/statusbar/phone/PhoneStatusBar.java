@@ -442,6 +442,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     int mKeyguardMaxNotificationCount;
 
     boolean mExpandedVisible;
+    private int mIconColor;	
 
     // Weather temperature
     private TextView mWeatherTempView;
@@ -689,12 +690,17 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 					 updateClearAll();
 					 updateEmptyShadeView();
 					 updateQsColors();
+			} else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.QS_ICON_COLOR))) {
+					recreateStatusBar();
+					updateRowStates();
+					updateSpeedbump();
+					updateClearAll();
+					updateEmptyShadeView();
  	  	    } else if (uri.equals(Settings.System.getUriFor(
                      Settings.System.QS_HEADER_TEXT_COLOR))
                      || uri.equals(Settings.System.getUriFor(
                      Settings.System.QS_HEADER_COLOR))
-                     || uri.equals(Settings.System.getUriFor(
-                     Settings.System.QS_ICON_COLOR))
                      || uri.equals(Settings.System.getUriFor(
                      Settings.System.QS_BACKGROUND_COLOR))) {
            	   	  	updateQsColors();
@@ -722,6 +728,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     UserHandle.USER_CURRENT) == 1;
          mQsColorSwitch = Settings.System.getIntForUser(resolver,
                     Settings.System.QS_COLOR_SWITCH, 0, mCurrentUserId) == 1;
+
+         mIconColor = Settings.System.getIntForUser(resolver,
+                 Settings.System.QS_ICON_COLOR, 0xFFFFFFFF, mCurrentUserId);
 
   	   int  mQSBackgroundColor = Settings.System.getInt(
                               resolver, Settings.System.QS_BACKGROUND_COLOR, 0xff263238);
@@ -1565,6 +1574,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         updateWeatherTextState(mWeatherController.getWeatherInfo().temp, mWeatherTempColor,
                 mWeatherTempSize, mWeatherTempFontStyle);
 
+        mIconColor = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.QS_ICON_COLOR, 0xFFFFFFFF, mCurrentUserId);
         mKeyguardUserSwitcher = new KeyguardUserSwitcher(mContext,
                 (ViewStub) mStatusBarWindowContent.findViewById(R.id.keyguard_user_switcher),
                 mKeyguardStatusBar, mNotificationPanel, mUserSwitcherController);
