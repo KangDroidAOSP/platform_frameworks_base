@@ -5128,6 +5128,13 @@ public final class Settings {
          * @hide
          */
         public static final String STATUSBAR_COLOR_SWITCH = "statusbar_color_switch";
+			
+        /**
+	     *
+         * Navbar Recents Switch
+         * @hide
+         */
+        public static final String NAVBAR_RECENTS_SWITCH = "navbar_recents_switch";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
