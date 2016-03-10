@@ -443,7 +443,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     int mKeyguardMaxNotificationCount;
 
     boolean mExpandedVisible;
-    private int mIconColor;	
+    // QS Colors
+    private int mQsIconColor;
+    private int mLabelColor;
 
     // Weather temperature
     private TextView mWeatherTempView;
@@ -619,12 +621,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUSBAR_COLOR_SWITCH),
                     false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.BATTERY_ICON_COLOR),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.BATTERY_TEXT_COLOR),
-                    false, this, UserHandle.USER_ALL);
 	    resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_BACKGROUND_COLOR),
                     false, this, UserHandle.USER_ALL);
@@ -634,7 +630,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NAVBAR_RECENTS_SWITCH),
                     false, this, UserHandle.USER_ALL);
-
+		 	resolver.registerContentObserver(Settings.System.getUriFor(
+					Settings.System.QS_TEXT_COLOR),
+					false, this, UserHandle.USER_ALL);
 		    update();
         }
 
@@ -701,6 +699,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 					updateSpeedbump();
 					updateClearAll();
 					updateEmptyShadeView();
+			} else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.QS_TEXT_COLOR))) {
+					DontStressOnRecreate();
  	  	    } else if (uri.equals(Settings.System.getUriFor(
                      Settings.System.QS_HEADER_TEXT_COLOR))
                      || uri.equals(Settings.System.getUriFor(
@@ -733,8 +734,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
          mQsColorSwitch = Settings.System.getIntForUser(resolver,
                     Settings.System.QS_COLOR_SWITCH, 0, mCurrentUserId) == 1;
 
-         mIconColor = Settings.System.getIntForUser(resolver,
+         mQsIconColor = Settings.System.getIntForUser(resolver,
                  Settings.System.QS_ICON_COLOR, 0xFFFFFFFF, mCurrentUserId);
+		 mLabelColor = Settings.System.getIntForUser(resolver,
+				Settings.System.QS_TEXT_COLOR, 0xFFFFFFFF, mCurrentUserId);
 
   	   int  mQSBackgroundColor = Settings.System.getInt(
                               resolver, Settings.System.QS_BACKGROUND_COLOR, 0xff263238);
@@ -1581,8 +1584,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         updateWeatherTextState(mWeatherController.getWeatherInfo().temp, mWeatherTempColor,
                 mWeatherTempSize, mWeatherTempFontStyle);
 
-        mIconColor = Settings.System.getIntForUser(mContext.getContentResolver(),
+        mQsIconColor = Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.QS_ICON_COLOR, 0xFFFFFFFF, mCurrentUserId);
+		
+        mLabelColor = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.QS_TEXT_COLOR, 0xFFFFFFFF, mCurrentUserId);
+		
         mKeyguardUserSwitcher = new KeyguardUserSwitcher(mContext,
                 (ViewStub) mStatusBarWindowContent.findViewById(R.id.keyguard_user_switcher),
                 mKeyguardStatusBar, mNotificationPanel, mUserSwitcherController);
@@ -3722,6 +3729,20 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             return -1; // no mode change
         }
         return newMode;
+    }
+	
+    private void DontStressOnRecreate() { // Update maps and remove children,views after the recreate statusbar .Provides to rest in the recreate
+        recreateStatusBar();
+        updateNotificationShadeForChildren();
+        mTmpChildOrderMap.clear();
+        updateRowStates();
+        updateSpeedbump();
+        updateClearAll();
+        updateEmptyShadeView();
+        updateQsExpansionEnabled();
+        mShadeUpdates.check();
+        mNotificationPanel.resetViews();
+        mQSPanel.refreshAllTiles();
     }
 
     private int barMode(int vis, int transientFlag, int translucentFlag) {

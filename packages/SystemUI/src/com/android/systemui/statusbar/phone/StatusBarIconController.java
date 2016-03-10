@@ -38,7 +38,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.internal.statusbar.StatusBarIcon;
-import com.android.internal.util.rr.ColorHelper;
+import com.android.internal.util.temasek.ColorHelper;
 import com.android.internal.util.slim.DeviceUtils;
 import com.android.internal.util.darkkat.StatusBarColorHelper;
 import com.android.internal.util.NotificationColorUtil;
@@ -480,10 +480,6 @@ public class StatusBarIconController implements Tunable {
     public void applyIconTint() {
 	mColorSwitch =  Settings.System.getInt(mContext.getContentResolver(),
 				 Settings.System.STATUSBAR_COLOR_SWITCH, 0) == 1;	
-	int batterytext = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.BATTERY_TEXT_COLOR, 0xFFFFFFFF);
-        int mBatteryIconColor = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.BATTERY_ICON_COLOR, 0xFFFFFFFF);
         for (int i = 0; i < mStatusIcons.getChildCount(); i++) {
             StatusBarIconView v = (StatusBarIconView) mStatusIcons.getChildAt(i);
 	    if (mColorSwitch) {
@@ -496,12 +492,9 @@ public class StatusBarIconController implements Tunable {
         mSignalCluster.setIconTint(
                 mNetworkSignalColorTint, mNoSimColorTint, mAirplaneModeColorTint, mDarkIntensity);
         mMoreIcon.setImageTintList(ColorStateList.valueOf(mNotificationIconsColorTint));
-	mBatteryLevelTextView.setTextColor(batterytext);
-	mBatteryMeterView.setDarkIntensity(mBatteryIconColor);
 	} else {
 	mSignalCluster.setIconStockTint(mIconTint, mDarkIntensity);
         mMoreIcon.setImageTintList(ColorStateList.valueOf(mIconTint));
-	mBatteryLevelTextView.setTextColor(mIconTint);
         mBatteryMeterView.setDarkIntensity(mDarkIntensity);
         mClockController.setTextColor(mIconTint);
         applyNotificationIconsTint();
