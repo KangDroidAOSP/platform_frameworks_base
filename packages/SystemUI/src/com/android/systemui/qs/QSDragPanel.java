@@ -122,6 +122,11 @@ public class QSDragPanel extends QSPanel implements View.OnDragListener, View.On
     private int mLastRightShift = -1;
     private int addRows;
     private int moreSlots;
+
+    // QS Colors
+    private int mQsIconColor;
+    private int mLabelColor;
+
     public QSTileView mTileView;
 
     protected Vibrator mVibrator;
@@ -175,12 +180,14 @@ public class QSDragPanel extends QSPanel implements View.OnDragListener, View.On
         mDetail.setClickable(true);
 	mQsColorSwitch = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.QS_COLOR_SWITCH, 0) == 1;
-	int QsTextColor = Settings.System.getInt(mContext.getContentResolver(),
+	mLabelColor = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.QS_TEXT_COLOR, 0xFFFFFFFF);
+	mQsIconColor = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.QS_ICON_COLOR, 0xFFFFFFFF);
 	 if (mQsColorSwitch) {
-            mDetailDoneButton.setTextColor(QsTextColor);
-            mDetailSettingsButton.setTextColor(QsTextColor);
-	    mDetailRemoveButton.setTextColor(QsTextColor);
+            mDetailDoneButton.setTextColor(mLabelColor);
+            mDetailSettingsButton.setTextColor(mLabelColor);
+	    mDetailRemoveButton.setTextColor(mLabelColor);
         }
 
 	mQsVibSignlepress = Settings.System.getInt(mContext.getContentResolver(),
@@ -915,10 +922,10 @@ public class QSDragPanel extends QSPanel implements View.OnDragListener, View.On
     }
 
     public void updateicons() {
-		int mQsText = Settings.System.getInt(mContext.getContentResolver(),
-				Settings.System.QS_TEXT_COLOR, 0xFFFFFFFF);
-		int mQsIcon = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.QS_ICON_COLOR, 0xFFFFFFFF);
+		mLabelColor = Settings.System.getInt(mContext.getContentResolver(),
+					Settings.System.QS_TEXT_COLOR, 0xFFFFFFFF);
+		mQsIconColor = Settings.System.getInt(mContext.getContentResolver(),
+					Settings.System.QS_ICON_COLOR, 0xFFFFFFFF);
 	}
 
     private void removeDraggingRecord() {
