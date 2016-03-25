@@ -130,8 +130,6 @@ interface IBatteryStats {
     /** @hide */
     ParcelFileDescriptor getDockStatisticsStream();
     /** @hide **/
-    void resetStatistics();
-    /** @hide **/
     void setDockBatteryState(int status, int health, int plugType, int level, int temp, int volt);
     /** @hide **/
     long getAwakeTimeDockBattery();
