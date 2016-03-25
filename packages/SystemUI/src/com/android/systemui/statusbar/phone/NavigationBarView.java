@@ -42,6 +42,7 @@ import android.os.RemoteException;
 import android.os.UserHandle;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.provider.Settings;
 import android.view.*;
 import android.view.inputmethod.InputMethodManager;
 import android.view.animation.AccelerateInterpolator;
