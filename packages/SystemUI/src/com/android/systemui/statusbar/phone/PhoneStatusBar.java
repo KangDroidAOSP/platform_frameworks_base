@@ -390,7 +390,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private boolean mQsColorSwitch = false;
     public boolean mColorSwitch = false ;
-    public QSTileView mTileView;
     private  View mIcon;
     public QSDetailItems mQsDetail;
     public SignalTileView mSignalView;	
@@ -1437,12 +1436,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mIconController = new StatusBarIconController(
                 mContext, mStatusBarView, mKeyguardStatusBar, this);
-
-	mTileView = new QSTileView (mContext);
-	mQsDetail = new QSDetailItems(mContext);
-	mSignalView = new SignalTileView(mContext);
-
-        mQsPanel = new QSPanel(mContext);
 
         // Background thread for any controllers that need it.
         mHandlerThread = new HandlerThread(TAG, Process.THREAD_PRIORITY_BACKGROUND);
@@ -2891,10 +2884,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 	mQSPanel.updateicons();
 	mNotificationPanel.setQSBackgroundColor();
 	mNotificationPanel.setQSColors();
-	mQsPanel.updatecolors();
-	mSignalView.setIconColor();
-	mTileView.setIconColor();
-	mTileView.updateColors();
 	}
 
     private void updateStatusIconsColor() {
