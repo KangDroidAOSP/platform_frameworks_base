@@ -17,7 +17,9 @@
 package com.android.systemui.statusbar.phone;
 
 import android.app.ActivityManager;
+import android.app.ActivityManagerNative;
 import android.app.AlarmManager;
+import android.app.IUserSwitchObserver;
 import android.app.PendingIntent;
 import android.content.ContentUris;
 import android.content.ContentResolver;
