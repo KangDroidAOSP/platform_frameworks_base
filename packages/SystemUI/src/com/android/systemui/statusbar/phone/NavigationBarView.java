@@ -1054,8 +1054,7 @@ public class NavigationBarView extends LinearLayout {
             getContext().getContentResolver().unregisterContentObserver(this);
         }
 
-        @Override
-        protected void update() {
+        public void update() {
             ContentResolver resolver = mContext.getContentResolver();
 			updateShowDpadKeys();
 
