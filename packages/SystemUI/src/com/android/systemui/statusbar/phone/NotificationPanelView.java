@@ -91,6 +91,8 @@ import cyanogenmod.providers.CMSettings;
 
 import java.util.List;
 
+import org.cyanogenmod.internal.util.CmLockPatternUtils;
+
 public class NotificationPanelView extends PanelView implements
         ExpandableView.OnHeightChangedListener, ObservableScrollView.Listener,
         View.OnClickListener, NotificationStackScrollLayout.OnOverscrollTopChangedListener,
