@@ -41,6 +41,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ViewAnimationUtils;
 import android.view.Gravity;
+import android.util.EventLog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowInsets;
@@ -60,6 +61,7 @@ import com.android.systemui.recents.model.RecentsPackageMonitor;
 import com.android.systemui.recents.model.RecentsTaskLoader;
 import com.android.systemui.recents.model.Task;
 import com.android.systemui.recents.model.TaskStack;
+import com.android.systemui.EventLogTags;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -310,6 +312,8 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
             stackView.startEnterRecentsAnimation(ctx);
         }
         ctx.postAnimationTrigger.decrement();
+
+        EventLog.writeEvent(EventLogTags.SYSUI_RECENTS_EVENT, 1 /* opened */);
     }
 
     /** Requests all task stacks to start their exit-recents animation */
@@ -850,6 +854,8 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
                 launchRunnable.run();
             }
         }
+
+        EventLog.writeEvent(EventLogTags.SYSUI_RECENTS_EVENT, 3 /* chose task */);
     }
 
     @Override
@@ -893,6 +899,7 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
 
         // Keep track of all-deletions
         MetricsLogger.count(getContext(), "overview_task_all_dismissed", 1);
+        EventLog.writeEvent(EventLogTags.SYSUI_RECENTS_EVENT, 4 /* closed all */);
     }
 
     /** Final callback after Recents is finally hidden. */
@@ -904,6 +911,7 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
             TaskStackView stackView = stackViews.get(i);
             stackView.onRecentsHidden();
         }
+        EventLog.writeEvent(EventLogTags.SYSUI_RECENTS_EVENT, 2 /* closed */);
     }
 
     @Override
