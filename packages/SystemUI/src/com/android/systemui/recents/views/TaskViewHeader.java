@@ -242,7 +242,6 @@ public class TaskViewHeader extends FrameLayout {
         mDismissButton.setContentDescription(String.format(mDismissContentDescription,
                 t.contentDescription));
         boolean floatingswitch = Settings.System.getInt(mContext.getContentResolver(), Settings.System.FLOATING_WINDOW_MODE, 0) == 1;
-        mMoveTaskButton.setVisibility((floatingswitch) ? View.VISIBLE : View.INVISIBLE);
         mMoveTaskButton.setImageDrawable(t.useLightOnPrimaryColor ?
                 mLightMultiwindowDrawable : mDarkMultiwindowDrawable);
 		mFloatButton.setImageDrawable(t.useLightOnPrimaryColor ?
@@ -361,7 +360,7 @@ public class TaskViewHeader extends FrameLayout {
     /** Resets the state tracking that the user has not interacted with the stack after a certain time. */
     void resetNoUserInteractionState() {
         mDismissButton.setVisibility(View.INVISIBLE);
-        mPinButton.setVisibility(View.INVISIBLE);
+        mPinButton.setVisibility(View.GONE);
         mFloatButton.setVisibility(View.INVISIBLE);
     }
 
