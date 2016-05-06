@@ -211,8 +211,12 @@ public class QSPanel extends ViewGroup {
     }
 
     protected void updateDetailText() {
+/*		int textColor = Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.QS_TEXT_COLOR, 0xffffffff); */
         mDetailDoneButton.setText(R.string.quick_settings_done);
         mDetailSettingsButton.setText(R.string.quick_settings_more_settings);
+//        mDetailDoneButton.setTextColor(textColor);
+//        mDetailSettingsButton.setTextColor(textColor);
     }
 
     public void setBrightnessMirror(BrightnessMirrorController c) {
@@ -311,6 +315,8 @@ public class QSPanel extends ViewGroup {
 
     public void refreshAllTiles() {
         for (TileRecord r : mRecords) {
+//            r.tileView.setLabelColor();
+            r.tileView.setIconColor();
             r.tile.refreshState();
         }
         mFooter.refreshState();
@@ -691,6 +697,10 @@ public class QSPanel extends ViewGroup {
                             color, Mode.SRC_OVER);
                 }
             }
+    }
+	
+    public void setColors() {
+        refreshAllTiles();
     }
 
     private class H extends Handler {
