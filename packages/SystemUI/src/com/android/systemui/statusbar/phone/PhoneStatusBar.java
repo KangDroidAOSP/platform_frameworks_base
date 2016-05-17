@@ -124,6 +124,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.statusbar.NotificationVisibility;
@@ -677,6 +678,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
 					Settings.System.QS_STROKE), false, this,
 					UserHandle.USER_ALL);
+	        resolver.registerContentObserver(Settings.Secure.getUriFor(
+	                    Settings.Secure.FLING_PULSE_ENABLED),
+	                    false, this, UserHandle.USER_ALL);
 		    update();
         }
 
@@ -762,6 +766,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     if (mQSStroke == 0) {
                     DontStressOnRecreate();
                     }
+				}  else if (uri.equals(Settings.Secure.getUriFor(
+		                    Settings.Secure.FLING_PULSE_ENABLED))) {
+				    makepulsetoast();
             }
             update();
         }
@@ -2903,6 +2910,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (mKeyguardStatusBar != null) {
             mKeyguardStatusBar.updateNetworkIconColors();
         }
+    }
+    
+    public void makepulsetoast() {
+    Toast.makeText(mContext,
+                        R.string.pulse_toast_message, Toast.LENGTH_SHORT).show();   
     }
 
     private void updateNoSimColor() {
