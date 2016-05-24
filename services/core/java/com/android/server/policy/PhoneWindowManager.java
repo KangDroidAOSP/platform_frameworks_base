@@ -3393,6 +3393,13 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         // it handle it, because that gives us the correct 5 second
         // timeout.
         if (keyCode == KeyEvent.KEYCODE_HOME) {
+			
+            if (mTopFullscreenOpaqueWindowState != null &&
+                    (mTopFullscreenOpaqueWindowState.getAttrs().privateFlags
+                            & WindowManager.LayoutParams.PRIVATE_FLAG_PREVENT_SYSTEM_KEYS) != 0
+                    && mScreenOnFully) {
+                return 0;
+            }
 
             // Disable home key if hw keys is set to off
             if (scanCode != 0 && !hasHwKeysEnabled()) {
@@ -6084,13 +6091,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
 
             case KeyEvent.KEYCODE_HOME:
-                if (mTopFullscreenOpaqueWindowState != null &&
-                        (mTopFullscreenOpaqueWindowState.getAttrs().privateFlags
-                                & WindowManager.LayoutParams.PRIVATE_FLAG_PREVENT_SYSTEM_KEYS) != 0
-                        && mScreenOnFully) {
-                    return result;
-                }
-
                 if (down && !interactive && mHomeWakeScreen) {
                     isWakeKey = true;
                 }
