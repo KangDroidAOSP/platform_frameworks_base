@@ -38,6 +38,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -279,6 +280,12 @@ public class NotificationPanelView extends PanelView implements
     private boolean mShowTaskManager;
     private boolean mTaskManagerShowing;
     private LinearLayout mTaskManagerPanel;
+
+    // QS stroke
+    private int mQSStroke;
+    private int mCustomStrokeColor;
+    private int mCustomStrokeThickness;
+    private int mCustomCornerRadius;
 
     // Used to identify whether showUnlock() can dismiss the keyguard
     // or not.
@@ -569,6 +576,7 @@ public class NotificationPanelView extends PanelView implements
                 Settings.System.QS_COLOR_SWITCH, 0,
                 UserHandle.USER_CURRENT) == 1;
             setQSBackgroundColor();
+			setQSStroke();
 
         mLockPatternUtils = new CmLockPatternUtils(getContext());
     }
@@ -2885,6 +2893,18 @@ public class NotificationPanelView extends PanelView implements
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_BACKGROUND_COLOR),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_STROKE),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_STROKE_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_STROKE_THICKNESS),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_CORNER_RADIUS),
+                    false, this, UserHandle.USER_ALL);
             update();
         }
 
@@ -2944,9 +2964,42 @@ public class NotificationPanelView extends PanelView implements
             mQsSmartPullDown = Settings.System.getIntForUser(
                     resolver, Settings.System.QS_SMART_PULLDOWN, 0,
                     UserHandle.USER_CURRENT);
+            mQSStroke = Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.QS_STROKE, 1);
+            mCustomStrokeColor = Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.QS_STROKE_COLOR, mContext.getResources().getColor(R.color.system_accent_color));
+            mCustomStrokeThickness = Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.QS_STROKE_THICKNESS, 4);
+            mCustomCornerRadius = Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.QS_CORNER_RADIUS, 0);
+
+            setQSStroke();
 
             boolean liveLockScreenEnabled = CMSettings.Secure.getInt(
                     resolver, CMSettings.Secure.LIVE_LOCK_SCREEN_ENABLED, 0) == 1;
+        }
+    }
+
+    private void setQSStroke() {
+        final GradientDrawable qSGd = new GradientDrawable();
+        if (mQsContainer != null) {
+            if (mQSStroke == 0) { // Disable by setting border thickness to 0
+                qSGd.setColor(mContext.getResources().getColor(R.color.system_primary_color));
+                qSGd.setStroke(0, mContext.getResources().getColor(R.color.system_accent_color));
+                qSGd.setCornerRadius(mCustomCornerRadius);
+                mQsContainer.setBackground(qSGd);
+            } else if (mQSStroke == 1) { // use accent color for border
+                qSGd.setColor(mContext.getResources().getColor(R.color.system_primary_color));
+                qSGd.setStroke(mCustomStrokeThickness, mContext.getResources().getColor(R.color.system_accent_color));
+            } else if (mQSStroke == 2) { // use custom border color
+                qSGd.setColor(mContext.getResources().getColor(R.color.system_primary_color));
+                qSGd.setStroke(mCustomStrokeThickness, mCustomStrokeColor);
+            }
+
+            if (mQSStroke != 0) {
+                qSGd.setCornerRadius(mCustomCornerRadius);
+                mQsContainer.setBackground(qSGd);
+            }
         }
     }
 
