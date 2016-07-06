@@ -4901,36 +4901,6 @@ public final class Settings {
          * @hide
          */
         public static final String QS_NUM_TILE_COLUMNS = "sysui_qs_num_tile_columns";
-			
-        /**
-         * Color of the text on the header of the expanded status bar
-         * @hide
-         */
-        public static final String STATUS_BAR_EXPANDED_HEADER_TEXT_COLOR = "status_bar_expanded_header_text_color";
-
-        /**
-         * Color of the icons on the header of the expanded status bar
-         * @hide
-         */
-        public static final String STATUS_BAR_EXPANDED_HEADER_ICON_COLOR = "status_bar_expanded_header_icon_color";  				
-
-		/**
-         * Color of the quick settings panel background
-         * @hide
-         */
-        public static final String QS_BACKGROUND_COLOR = "qs_background_color";
-			
-        /**
-         * Transparent shade
-         * @hide
-         */
-        public static final String QS_TRANSPARENT_SHADE = "qs_transparent_shade";
-			
-        /**
-         * Color of the expanded status bar header background
-         * @hide
-         */
-        public static final String STATUS_BAR_EXPANDED_HEADER_BG_COLOR = "status_bar_expanded_header_bg_color";		
 		
 	/**
          * Option to launch slim actions in floating mode
@@ -4983,12 +4953,19 @@ public final class Settings {
          * @hide
          */
         public static final String HEADS_UP_FORCE_ALL = "heads_up_force_all";
-
+			
         /**
-         * Color of the quick settings icons
+         * Transparent qs header
          * @hide
          */
-        public static final String QS_ICON_COLOR = "qs_icons_color";
+        public static final String QS_TRANSPARENT_HEADER = "qs_transparent_header";
+			
+       /**
+         * Transparent qs shade
+         * @hide
+         */
+        public static final String QS_TRANSPARENT_SHADE = "qs_transparent_shade";
+
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
