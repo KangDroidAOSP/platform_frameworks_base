@@ -632,6 +632,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 		 	resolver.registerContentObserver(Settings.System.getUriFor(
 					Settings.System.QS_TEXT_COLOR),
 					false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+					Settings.System.QS_STROKE), false, this,
+					UserHandle.USER_ALL);
 		    update();
         }
 
@@ -708,7 +711,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                      || uri.equals(Settings.System.getUriFor(
                      Settings.System.QS_BACKGROUND_COLOR))) {
            	   	  	updateQsColors();
-             }  
+		} else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.QS_STROKE))) {
+                    int mQSStroke = Settings.System.getIntForUser(
+                            mContext.getContentResolver(),
+                            Settings.System.QS_STROKE, 1,
+                            UserHandle.USER_CURRENT);
+                    if (mQSStroke == 0) {
+                    DontStressOnRecreate();
+                    }
+            }
             update();
         }
 
