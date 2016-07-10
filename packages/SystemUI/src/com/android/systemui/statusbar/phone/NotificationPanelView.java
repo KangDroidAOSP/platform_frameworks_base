@@ -62,6 +62,7 @@ import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.view.WindowManagerGlobal;
 import android.view.accessibility.AccessibilityEvent;
+import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 import android.view.animation.PathInterpolator;
@@ -1937,9 +1938,40 @@ public class NotificationPanelView extends PanelView implements
                     ? View.VISIBLE : View.GONE);
             mTaskManagerPanel.setVisibility(expandVisually && taskManagerShowing
                     && !mKeyguardShowing ? View.VISIBLE : View.GONE);
+            if (mTaskManagerShowing) {
+                mTaskManagerPanel.startAnimation(getAnimation(true));
+                mQsPanel.startAnimation(getAnimation(false));
+            } else {
+                mQsPanel.startAnimation(getAnimation(true));
+                mTaskManagerPanel.startAnimation(getAnimation(false));
+            }
+            updateQsState();
         }
     }
 
+    private Animation getAnimation(boolean isIn) {
+        ContentResolver resolver = mContext.getContentResolver();
+        int animationResId = 0;
+        final int style = Settings.System.getInt(resolver,
+                Settings.System.QS_TASK_ANIMATION, 0);
+ 
+        if (style == 0) {
+            animationResId = isIn ? R.anim.push_down_in : R.anim.push_down_out;
+        } else if (style == 1) {
+            animationResId = isIn ? R.anim.last_app_in : R.anim.last_app_out;
+        } else if (style == 2) {
+            animationResId = isIn ? R.anim.push_left_in : R.anim.push_right_out;
+        } else if (style == 3) {
+            animationResId = isIn ? R.anim.push_right_in : R.anim.push_left_out;
+        } else if (style == 4) {
+            animationResId = isIn ? R.anim.rotate : R.anim.push_down_out;
+        } else if (style == 5) {
+            animationResId = isIn ? R.anim.turn_in : R.anim.turn_out;
+        } else if (style == 6) {
+            animationResId = isIn ? R.anim.push_up_in : R.anim.push_up_out;
+        }
+        return AnimationUtils.loadAnimation(mContext, animationResId);
+    }
 
 
   private void cancelAnimation() {
