@@ -3755,30 +3755,6 @@ public final class Settings {
         public static final String CLOCK_USE_SECOND = "clock_use_second";
 
         /**
-         * Navigation bar height when it is on protrait
-         * @hide
-         */
-        public static final String NAVIGATION_BAR_HEIGHT = "navigation_bar_height";
-
-        /**
-         * Navigation bar height when it is on landscape
-         * @hide
-         */
-        public static final String NAVIGATION_BAR_HEIGHT_LANDSCAPE = "navigation_bar_height_landscape";
-
-        /**
-         * Navigation bar height when it is on landscape at the right
-         * @hide
-         */
-        public static final String NAVIGATION_BAR_WIDTH = "navigation_bar_width";
-
-        /**
-         * Wether navigation bar is enabled or not
-         * @hide
-         */
-        public static final String NAVIGATION_BAR_SHOW = "navigation_bar_show";
-
-        /**
          * Enable navigation bar double tap gesture on to put device to sleep
          * @hide
          */
@@ -5129,20 +5105,14 @@ public final class Settings {
          */
         public static final String QS_CORNER_RADIUS = "qs_corner_radius";
 
-<<<<<<< HEAD
         /**
          * Quick settings custom stroke dash width
          * Set 0 to disable (default)
-=======
-         /**
-         * Setting for clock color
->>>>>>> parent of 2f979fa... Base: Navigation bar options (1/2)
          * @hide
          */
         public static final String QS_STROKE_DASH_WIDTH = "qs_stroke_dash_width";
 
         /**
-<<<<<<< HEAD
          * Quick settings custom stroke dash gap
          * 10 is default for AICP
          * @hide
@@ -5167,10 +5137,14 @@ public final class Settings {
          * @hide
          */
         public static final String QS_TASK_ANIMATION = "qs_task_animation";
+			
+        /**
+         * Navbar Button Color
+         * @hide
+         */
+        public static final String NAVBAR_BUTTON_COLOR = "navbar_button_color";
 
         /**
-=======
->>>>>>> parent of 2f979fa... Base: Navigation bar options (1/2)
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -7983,6 +7957,12 @@ public final class Settings {
          * @hide
          */
         public static final String PULSE_LAVALAMP_SOLID_SPEED = "lava_lamp_solid_speed";
+		
+        /**
+         * Navbar buttons transparency
+         * @hide
+         */
+        public static final String NAVBAR_BUTTONS_ALPHA = "navbar_buttons_alpha";
 
         /**
          * This are the settings to be backed up.
