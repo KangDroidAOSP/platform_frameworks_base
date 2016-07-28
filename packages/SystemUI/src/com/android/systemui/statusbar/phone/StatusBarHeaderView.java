@@ -69,7 +69,6 @@ import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
 import com.android.systemui.cm.UserContentObserver;
 import com.android.systemui.qs.QSDragPanel;
-import com.android.systemui.omni.StatusBarHeaderMachine;
 import com.android.systemui.qs.QSPanel;
 import com.android.systemui.qs.QSTile;
 import com.android.systemui.statusbar.policy.BatteryController;
@@ -89,8 +88,7 @@ import org.cyanogenmod.internal.logging.CMMetricsLogger;
  * The view to manage the header area in the expanded status bar.
  */
 public class StatusBarHeaderView extends RelativeLayout implements View.OnClickListener,
-        NextAlarmController.NextAlarmChangeCallback, WeatherController.Callback, EmergencyListener,
-		StatusBarHeaderMachine.IStatusBarHeaderMachineObserver {
+        NextAlarmController.NextAlarmChangeCallback, WeatherController.Callback, EmergencyListener {
     static final String TAG = "StatusBarHeaderView";
 
     private boolean mExpanded;
@@ -178,12 +176,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private boolean mEditing;
 
     private ImageView mBackgroundImage;
-    private Drawable mCurrentBackground;
-    private float mLastHeight;
     private UserInfoController mUserInfoController;
-
-    // QS header alpha
-    private int mQSHeaderAlpha;
 
     private boolean mQsColorSwitch = false ;	
     private int mHeaderColor;
@@ -259,12 +252,10 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mWeatherLine2 = (TextView) findViewById(R.id.weather_line_2);
         mEditTileDoneText = (TextView) findViewById(R.id.done);
         mSettingsObserver = new SettingsObserver(new Handler());
-        mBackgroundImage = (ImageView) findViewById(R.id.background_image);
         loadDimens();
         updateVisibilities();
         updateClockScale();
         updateAvatarScale();
-        setQSHeaderAlpha();
         setStatusBarHeaderFontStyle(mStatusBarHeaderFontStyle);
 		setHeaderColor();
         addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
@@ -678,27 +669,14 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         }
         mCurrentT = t;
         float height = mCollapsedHeight + t * (mExpandedHeight - mCollapsedHeight);
-        if (height != mLastHeight) {
-            if (height < mCollapsedHeight) {
-                height = mCollapsedHeight;
-            }
-            if (height > mExpandedHeight) {
-                height = mExpandedHeight;
-            }
-            final float heightFinal = height;
-            setClipping(heightFinal);
-
-            post(new Runnable() {
-                 public void run() {
-                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mBackgroundImage.getLayoutParams(); 
-                    params.height = (int)heightFinal;
-                    mBackgroundImage.setLayoutParams(params);
-                }
-            });
-
-            updateLayoutValues(t);
-            mLastHeight = heightFinal;
+        if (height < mCollapsedHeight) {
+            height = mCollapsedHeight;
         }
+        if (height > mExpandedHeight) {
+            height = mExpandedHeight;
+        }
+        setClipping(height);
+        updateLayoutValues(t);
     }
 
     private void updateLayoutValues(float t) {
@@ -1185,8 +1163,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             resolver.registerContentObserver(CMSettings.System.getUriFor(
                     CMSettings.System.STATUS_BAR_SHOW_BATTERY_PERCENT), false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.QS_TRANSPARENT_HEADER), false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_HEADER_FONT_STYLE), false, this, UserHandle.USER_ALL);
 			resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_COLOR_SWITCH), false, this,
@@ -1235,9 +1211,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             mShowBatteryTextExpanded = showExpandedBatteryPercentage;
             mShowWeather = CMSettings.System.getInt(
                     resolver, CMSettings.System.STATUS_BAR_SHOW_WEATHER, 1) == 1;
-            mQSHeaderAlpha = Settings.System.getInt(
-                    resolver, Settings.System.QS_TRANSPARENT_HEADER, 255);
-            setQSHeaderAlpha();
 
 	    mQsColorSwitch = Settings.System.getInt(mContext.getContentResolver(),
 		Settings.System.QS_COLOR_SWITCH, 0) == 1;
@@ -1251,58 +1224,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             requestCaptureValues();
 	    setHeaderColor();
         }
-    }
-
-    private void doUpdateStatusBarCustomHeader(final Drawable next, final boolean force) {
-        if (next != null) {
-            if (next != mCurrentBackground) {
-                Log.i(TAG, "Updating status bar header background");
-                mBackgroundImage.setVisibility(View.VISIBLE);
-                setNotificationPanelHeaderBackground(next, force);
-                mCurrentBackground = next;
-            }
-        } else {
-            mCurrentBackground = null;
-            mBackgroundImage.setVisibility(View.GONE);
-        }
-    }
-
-    private void setNotificationPanelHeaderBackground(final Drawable dw, final boolean force) {
-        if (mBackgroundImage.getDrawable() != null && !force) {
-            Drawable[] arrayDrawable = new Drawable[2];
-            arrayDrawable[0] = mBackgroundImage.getDrawable();
-            arrayDrawable[1] = dw;
-
-            TransitionDrawable transitionDrawable = new TransitionDrawable(arrayDrawable);
-            transitionDrawable.setCrossFadeEnabled(true);
-            mBackgroundImage.setImageDrawable(transitionDrawable);
-            transitionDrawable.startTransition(1000);
-        } else {
-            mBackgroundImage.setImageDrawable(dw);
-        }
-    }
-
-    @Override
-    public void updateHeader(final Drawable headerImage, final boolean force) {
-        post(new Runnable() {
-             public void run() {
-                // TODO we dont need to do this every time but we dont have
-                // an other place to know right now when custom header is enabled
-                enableTextShadow();
-                doUpdateStatusBarCustomHeader(headerImage, force);
-            }
-        });
-    }
-
-    @Override
-    public void disableHeader() {
-        post(new Runnable() {
-             public void run() {
-                mCurrentBackground = null;
-                mBackgroundImage.setVisibility(View.GONE);
-                disableTextShadow();
-            }
-        });
     }
 
     /**
@@ -1335,15 +1256,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mWeatherLine1.setShadowLayer(0, 0, 0, Color.BLACK);
         mWeatherLine2.setShadowLayer(0, 0, 0, Color.BLACK);
         mEditTileDoneText.setShadowLayer(0, 0, 0, Color.BLACK);
-    }
-
-    private void setQSHeaderAlpha() {
-        if (mHeaderView != null) {
-            mHeaderView.getBackground().setAlpha(mQSHeaderAlpha);
-        }
-        if (mBackgroundImage != null) {
-            mBackgroundImage.setAlpha(mQSHeaderAlpha);
-        }
     }
 
     private void setStatusBarHeaderFontStyle(int font) {
