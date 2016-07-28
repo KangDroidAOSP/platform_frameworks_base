@@ -3819,27 +3819,6 @@ public final class Settings {
         public static final String DOUBLE_TAP_SLEEP_NAVBAR = "double_tap_sleep_navbar";
 
         /**
-         * Whether to use the custom status bar header or not
-         * @hide
-         */
-        public static final String STATUS_BAR_CUSTOM_HEADER = "status_bar_custom_header";
-
-        /**
-         * Current active provider
-         * @hide
-         */
-        public static final String STATUS_BAR_CUSTOM_HEADER_PROVIDER = "status_bar_custom_header_provider";
-
-        /**
-         * Whether to use default custom header or poly hd
-         * 0 = default
-         * 1 = modern
-         * 2 = poly hd
-         * @hide
-         */
-        public static final String STATUS_BAR_CUSTOM_HEADER_DEFAULT = "status_bar_custom_header_default";
-
-        /**
          * Network traffic indicator, goes from least to greatest significant bitwise
          * 0 = Display up-stream traffic if set
          * 1 = Display down-stream traffic if set
@@ -5014,18 +4993,6 @@ public final class Settings {
          * @hide
          */
         public static final String HEADS_UP_FORCE_ALL = "heads_up_force_all";
-			
-        /**
-         * Transparent qs header
-         * @hide
-         */
-        public static final String QS_TRANSPARENT_HEADER = "qs_transparent_header";
-			
-       /**
-         * Transparent qs shade
-         * @hide
-         */
-        public static final String QS_TRANSPARENT_SHADE = "qs_transparent_shade";
 
         /**
          * Transparent volume dialog
