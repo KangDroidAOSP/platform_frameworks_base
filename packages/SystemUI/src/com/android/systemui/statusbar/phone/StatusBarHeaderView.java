@@ -182,9 +182,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private float mLastHeight;
     private UserInfoController mUserInfoController;
 
-    // QS header alpha
-    private int mQSHeaderAlpha;
-
     private boolean mQsColorSwitch = false ;	
     private int mHeaderColor;
 
@@ -264,7 +261,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         updateVisibilities();
         updateClockScale();
         updateAvatarScale();
-        setQSHeaderAlpha();
         setStatusBarHeaderFontStyle(mStatusBarHeaderFontStyle);
 		setHeaderColor();
         addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
@@ -1185,8 +1181,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             resolver.registerContentObserver(CMSettings.System.getUriFor(
                     CMSettings.System.STATUS_BAR_SHOW_BATTERY_PERCENT), false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.QS_TRANSPARENT_HEADER), false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_HEADER_FONT_STYLE), false, this, UserHandle.USER_ALL);
 			resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_COLOR_SWITCH), false, this,
@@ -1235,9 +1229,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             mShowBatteryTextExpanded = showExpandedBatteryPercentage;
             mShowWeather = CMSettings.System.getInt(
                     resolver, CMSettings.System.STATUS_BAR_SHOW_WEATHER, 1) == 1;
-            mQSHeaderAlpha = Settings.System.getInt(
-                    resolver, Settings.System.QS_TRANSPARENT_HEADER, 255);
-            setQSHeaderAlpha();
 
 	    mQsColorSwitch = Settings.System.getInt(mContext.getContentResolver(),
 		Settings.System.QS_COLOR_SWITCH, 0) == 1;
@@ -1335,15 +1326,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mWeatherLine1.setShadowLayer(0, 0, 0, Color.BLACK);
         mWeatherLine2.setShadowLayer(0, 0, 0, Color.BLACK);
         mEditTileDoneText.setShadowLayer(0, 0, 0, Color.BLACK);
-    }
-
-    private void setQSHeaderAlpha() {
-        if (mHeaderView != null) {
-            mHeaderView.getBackground().setAlpha(mQSHeaderAlpha);
-        }
-        if (mBackgroundImage != null) {
-            mBackgroundImage.setAlpha(mQSHeaderAlpha);
-        }
     }
 
     private void setStatusBarHeaderFontStyle(int font) {

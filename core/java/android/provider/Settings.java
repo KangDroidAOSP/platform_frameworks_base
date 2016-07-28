@@ -5014,18 +5014,6 @@ public final class Settings {
          * @hide
          */
         public static final String HEADS_UP_FORCE_ALL = "heads_up_force_all";
-			
-        /**
-         * Transparent qs header
-         * @hide
-         */
-        public static final String QS_TRANSPARENT_HEADER = "qs_transparent_header";
-			
-       /**
-         * Transparent qs shade
-         * @hide
-         */
-        public static final String QS_TRANSPARENT_SHADE = "qs_transparent_shade";
 
         /**
          * Transparent volume dialog
