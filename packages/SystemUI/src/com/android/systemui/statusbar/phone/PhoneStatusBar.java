@@ -966,7 +966,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private boolean mAutohideSuspended;
     private int mStatusBarMode;
     private int mNavigationBarMode;
-    private StatusBarHeaderMachine mStatusBarHeaderMachine;
 
     private ViewMediatorCallback mKeyguardViewMediatorCallback;
     private ScrimController mScrimController;
@@ -1802,20 +1801,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         // Private API call to make the shadows look better for Recents
         ThreadedRenderer.overrideProperty("ambientRatio", String.valueOf(1.5f));
-
-        mStatusBarHeaderMachine = new StatusBarHeaderMachine(mContext);
-        mStatusBarHeaderMachine.addObserver(mHeader);
-        mStatusBarHeaderMachine.updateEnablement();
         UpdateNotifDrawerClearAllIconColor();
         updateNetworkIconColors();
         return mStatusBarView;
     }
-	
-	public void updateheaderForKDP() {
-        mStatusBarHeaderMachine = new StatusBarHeaderMachine(mContext);
-        mStatusBarHeaderMachine.addObserver(mHeader);
-        mStatusBarHeaderMachine.updateEnablement();
-	}
 	
 	public void updateKDPWeatherContents() {
         mWeatherTempStyle = Settings.System.getIntForUser(
@@ -2895,7 +2884,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 	mSignalView.setIconColor();
 	mTileView.setIconColor();
 	mTileView.updateColors();
-	mStatusBarHeaderMachine.doUpdateStatusHeaderObservers(true);
 	}
 
     private void updateStatusIconsColor() {
