@@ -105,7 +105,6 @@ public class StatusBarIconController implements Tunable {
     private int mNotificationIconsColor;
     private int mNotificationIconsColorTint;
     private float mDarkIntensity;
-	private TextView mCarrier;
 
     private boolean mTransitionPending;
     private boolean mTintChangePending;
@@ -497,13 +496,6 @@ public class StatusBarIconController implements Tunable {
 	mSignalCluster.setIconStockTint(mIconTint, mDarkIntensity);
         mMoreIcon.setImageTintList(ColorStateList.valueOf(mIconTint));
         mBatteryMeterView.setDarkIntensity(mDarkIntensity);
-        if (Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.STATUS_BAR_CARRIER_COLOR,
-                mContext.getResources().getColor(R.color.status_bar_clock_color),
-                UserHandle.USER_CURRENT) == mContext.getResources().
-                getColor(R.color.status_bar_clock_color)) {
-            mCarrierLabel.setTextColor(mIconTint);
-        }
         mClockController.setTextColor(mIconTint);
         applyNotificationIconsTint();
 	}
