@@ -92,4 +92,8 @@
     <!-- Heads up snooze toast -->
     <string name="heads_up_snooze_message">Heads up is snoozing for <xliff:g id="number">%d</xliff:g> minutes.</string>
 
+     <!-- Slim recents app sidebar queue app toast -->
+    <string name="toast_recents_queue_app">Launch %s after closing recents</string>
+    <string name="toast_recents_cancel_queued_app">Cancelled app launch</string>
+
 </resources>

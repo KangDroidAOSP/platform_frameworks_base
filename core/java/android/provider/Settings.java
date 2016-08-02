@@ -4407,6 +4407,22 @@ public final class Settings {
         */
         public static final String PA_PIE_STATE = "pa_pie_state";
 
+
+        /**
+         * Whether to use slim recent app sidebar
+         * @hide
+         */
+        public static final String USE_RECENT_APP_SIDEBAR = "use_recent_app_sidebar";
+
+	/*
+         * Whether the app sidebar should open simultaneously with recents
+         * Alternative: recents are allowed to open before the app sidebar finished inflating
+         *
+         * @hide
+         */
+        public static final String RECENT_APP_SIDEBAR_OPEN_SIMULTANEOUSLY =
+                "recent_app_sidebar_open_simultaneously";
+
         /**
          * Pie size fraction, default is 1.0f (normal)
          * @hide
