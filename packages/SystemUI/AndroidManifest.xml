@@ -160,6 +160,9 @@
     <!-- Action target -->
     <uses-permission android:name="android.permission.FORCE_STOP_PACKAGES" />
 
+    <!-- Halo -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+
     <application
         android:name=".SystemUIApplication"
         android:persistent="true"
