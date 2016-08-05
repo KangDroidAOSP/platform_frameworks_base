@@ -312,6 +312,7 @@ public class WifiTile extends QSTile<QSTile.SignalState> {
             listView.setOnItemClickListener(this);
             listView.setAdapter(mAdapter =
                     new QSDetailItemsList.QSDetailListAdapter(context, mDisplayedAccessPoints));
+			mAdapter.setCallback(this);
             mItemsList.setEmptyState(R.drawable.ic_qs_wifi_detail_empty,
                     R.string.quick_settings_wifi_detail_empty_text);
             updateItems();
