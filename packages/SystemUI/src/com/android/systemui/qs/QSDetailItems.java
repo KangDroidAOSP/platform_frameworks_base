@@ -77,13 +77,7 @@ public class QSDetailItems extends FrameLayout {
     public QSDetailItems(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
-        mTag = TAG;
-    }
-
-    public QSDetailItems(Context context) {
-        super(context);
-        mContext = context;
-	mSettingsObserver = new SettingsObserver(mHandler);
+		mSettingsObserver = new SettingsObserver(mHandler);
         mTag = TAG;
     }
 
