@@ -111,6 +111,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private SettingsButton mSettingsButton;
     private View mSettingsContainer;
     private View mHaloButton;
+    private boolean mShowhaloButton;
     private View mQsDetailHeader;
     private TextView mQsDetailHeaderTitle;
     private Switch mQsDetailHeaderSwitch;
@@ -528,7 +529,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mAlarmStatus.setVisibility(mExpanded && mAlarmShowing ? View.VISIBLE : View.INVISIBLE);
         mSettingsContainer.setVisibility(mExpanded ? View.VISIBLE : View.INVISIBLE);
         mWeatherContainer.setVisibility(mExpanded && mShowWeather ? View.VISIBLE : View.GONE);
-        mHaloButton.setVisibility(mExpanded ? View.VISIBLE : View.INVISIBLE);
+        mHaloButton.setVisibility(mExpanded && mShowhaloButton ? View.VISIBLE : mShowhaloButton ? View.INVISIBLE : View.GONE);
         mTaskManagerButton.setVisibility(mExpanded && mShowTaskManager ? View.VISIBLE : View.GONE);
         mQsDetailHeader.setVisibility(mExpanded && mShowingDetail ? View.VISIBLE : View.GONE);
         if (mSignalCluster != null) {
@@ -1246,6 +1247,9 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
                 Settings.System.STATUS_BAR_HEADER_FONT_STYLE, FONT_NORMAL,
                 UserHandle.USER_CURRENT);
             setStatusBarHeaderFontStyle(mStatusBarHeaderFontStyle);
+
+            mShowhaloButton = Settings.Secure.getInt(resolver,
+                    Settings.Secure.HALO_ENABLE, 0) == 1 ;
 
             updateVisibilities();
             requestCaptureValues();
