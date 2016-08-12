@@ -3053,11 +3053,6 @@ public final class Settings {
          */
         public static final String NAVIGATION_BAR_TINT = "navigation_bar_tint";
 
-        /**
-         * Enable HW keys
-         * @hide
-         */
-        public static final String ENABLE_HW_KEYS = "enable_hw_keys";
 
         /**
          * Date format string
