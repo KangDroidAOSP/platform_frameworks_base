@@ -5121,14 +5121,20 @@ public final class Settings {
          */
         public static final String QS_CORNER_RADIUS = "qs_corner_radius";
 
+<<<<<<< HEAD
         /**
          * Quick settings custom stroke dash width
          * Set 0 to disable (default)
+=======
+         /**
+         * Setting for clock color
+>>>>>>> parent of 2f979fa... Base: Navigation bar options (1/2)
          * @hide
          */
         public static final String QS_STROKE_DASH_WIDTH = "qs_stroke_dash_width";
 
         /**
+<<<<<<< HEAD
          * Quick settings custom stroke dash gap
          * 10 is default for AICP
          * @hide
@@ -5155,6 +5161,8 @@ public final class Settings {
         public static final String QS_TASK_ANIMATION = "qs_task_animation";
 
         /**
+=======
+>>>>>>> parent of 2f979fa... Base: Navigation bar options (1/2)
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *

@@ -23,11 +23,6 @@ import java.util.Locale;
 
 public class TemasekUtils {
 
-    public static boolean isNavBarDefault(Context context) {
-        return context.getResources().getBoolean(
-                com.android.internal.R.bool.config_showNavigationBar);
-    }
-
     public static boolean isChineseLanguage() {
        return Resources.getSystem().getConfiguration().locale.getLanguage().startsWith(
                Locale.CHINESE.getLanguage());
