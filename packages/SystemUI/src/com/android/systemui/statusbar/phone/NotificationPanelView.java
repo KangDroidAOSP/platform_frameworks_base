@@ -637,7 +637,11 @@ public class NotificationPanelView extends PanelView implements
 
         mBlurredView.setVisibility(View.INVISIBLE);
 
-        handleQuickSettingsBackround();
+        if (mTranslucentQuickSettings) {
+            handleQuickSettingsBackround();
+        } else {
+            setQSStroke();
+        }
     }
 	
     private static void handleQuickSettingsBackround() {
@@ -1684,7 +1688,6 @@ public class NotificationPanelView extends PanelView implements
 
         try {
             handleQuickSettingsBackround();
-            StatusBarHeaderView.handleStatusBarHeaderViewBackround();
         } catch (Exception e){
         }
     }
@@ -3279,13 +3282,15 @@ public class NotificationPanelView extends PanelView implements
             mTranslucencyPercentage = Settings.System.getInt(mContext.getContentResolver(),
                     Settings.System.TRANSLUCENT_QUICK_SETTINGS_PRECENTAGE_PREFERENCE_KEY, 60);
 
-            mBlurDarkColorFilter = Color.LTGRAY;
-            mBlurMixedColorFilter = Color.GRAY;
-            mBlurLightColorFilter = Color.DKGRAY;
-            mTranslucencyPercentage = 255 - ((mTranslucencyPercentage * 255) / 100);
-			
-            handleQuickSettingsBackround();
-            setQSStroke();
+            if (mTranslucentQuickSettings) {
+                mBlurDarkColorFilter = Color.LTGRAY;
+                mBlurMixedColorFilter = Color.GRAY;
+                mBlurLightColorFilter = Color.DKGRAY;
+                mTranslucencyPercentage = 255 - ((mTranslucencyPercentage * 255) / 100);
+                handleQuickSettingsBackround();
+            } else {
+                setQSStroke();
+            }
 
             boolean liveLockScreenEnabled = CMSettings.Secure.getInt(
                     resolver, CMSettings.Secure.LIVE_LOCK_SCREEN_ENABLED, 0) == 1;
