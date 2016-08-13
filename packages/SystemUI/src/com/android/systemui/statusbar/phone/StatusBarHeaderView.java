@@ -300,23 +300,28 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         }
 
         mStatusBarHeaderView = this;
-        handleStatusBarHeaderViewBackround();
+        if (mTranslucentHeader) {
+            handleStatusBarHeaderViewBackround();
+        } else {
+            //Do nothing
+        }
     }
 
-    public static void handleStatusBarHeaderViewBackround() {
+    public void handleStatusBarHeaderViewBackround() {
 
         if (NotificationPanelView.mNotificationPanelView == null)
             return;
 
         boolean mKeyguardShowing = NotificationPanelView.mKeyguardShowing;
 
-        if (mStatusBarHeaderView == null)
+        if (mHeaderView == null)
             return;
         if (mKeyguardShowing) {
-            mStatusBarHeaderView.getBackground().setAlpha(255);
+            mHeaderView.getBackground().setAlpha(255);
+            mBackgroundImage.setAlpha(255);
         } else {
-            mTranslucencyPercentage = 255 - ((mTranslucencyPercentage * 255) / 100);
-            mStatusBarHeaderView.getBackground().setAlpha(mTranslucentHeader ? mTranslucencyPercentage : 255);
+            mHeaderView.getBackground().setAlpha(mTranslucentHeader ? mTranslucencyPercentage : 255);
+            mBackgroundImage.setAlpha(mTranslucentHeader ? mTranslucencyPercentage : 255);
         }
     }
 
@@ -556,6 +561,9 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         if (mDockBatteryLevel != null) {
             mDockBatteryLevel.setForceShown(mExpanded && mShowBatteryTextExpanded);
             mDockBatteryLevel.setVisibility(View.VISIBLE);
+        }
+        if (mTranslucentHeader) {
+            handleStatusBarHeaderViewBackround();
         }
     }
 
@@ -1252,7 +1260,12 @@ resolver.registerContentObserver(Settings.System.getUriFor(
             mTranslucencyPercentage = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.TRANSLUCENT_HEADER_PRECENTAGE_PREFERENCE_KEY, 70);
 
-            handleStatusBarHeaderViewBackround();
+            if (mTranslucentHeader) {
+                mTranslucencyPercentage = 255 - ((mTranslucencyPercentage * 255) / 100);
+                handleStatusBarHeaderViewBackround();
+            } else {
+				//Do nothing
+            }
             updateEverything();
             updateVisibilities();
             requestCaptureValues();
