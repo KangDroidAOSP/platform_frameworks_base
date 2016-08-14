@@ -3656,6 +3656,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mDozeServiceHost.fireBuzzBeepBlinked();
         }
     }
+	
+    @Override // CommandQueue
+    public void showCustomIntentAfterKeyguard(Intent intent) {
+        startActivityDismissingKeyguard(intent, false, false);
+    }
 
     @Override
     public void notificationLightOff() {
