@@ -637,10 +637,11 @@ public class NotificationPanelView extends PanelView implements
 
         mBlurredView.setVisibility(View.INVISIBLE);
 
+        setQSStroke();
         if (mTranslucentQuickSettings) {
             handleQuickSettingsBackround();
         } else {
-            setQSStroke();
+			//Do nothing
         }
     }
 	
@@ -664,8 +665,12 @@ public class NotificationPanelView extends PanelView implements
         }
         if (mNotificationPanelView == null)
             return;
-        if (mKeyguardShowing || mHeadsUpShowing || mHeadsUpAnimatingAway)
+        if (mHeadsUpShowing || mHeadsUpAnimatingAway)
             return;
+        if (mTranslucentQuickSettings) {
+            if (mKeyguardShowing)
+                return;
+        }
 
         BlurTask.setBlurTaskCallback(new BlurUtils.BlurTaskCallback() {
 
@@ -757,7 +762,6 @@ public class NotificationPanelView extends PanelView implements
         mBlurredView.setTag("ready_to_blur");
 
         mBlurredView.setVisibility(View.INVISIBLE);
-
     }
 
     public static class BlurTask extends AsyncTask<Void, Void, Bitmap> {
@@ -1687,7 +1691,11 @@ public class NotificationPanelView extends PanelView implements
         updateQsState();
 
         try {
-            handleQuickSettingsBackround();
+            if (mTranslucentQuickSettings) {
+                handleQuickSettingsBackround();
+            } else {
+                setQSBackgroundAlpha();
+            }
         } catch (Exception e){
         }
     }
@@ -3282,6 +3290,8 @@ public class NotificationPanelView extends PanelView implements
             mTranslucencyPercentage = Settings.System.getInt(mContext.getContentResolver(),
                     Settings.System.TRANSLUCENT_QUICK_SETTINGS_PRECENTAGE_PREFERENCE_KEY, 60);
 
+            setQSPanelLogo();
+            setQSStroke();
             if (mTranslucentQuickSettings) {
                 mBlurDarkColorFilter = Color.LTGRAY;
                 mBlurMixedColorFilter = Color.GRAY;
