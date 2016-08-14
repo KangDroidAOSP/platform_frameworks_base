@@ -57,8 +57,6 @@
     <string name="navbar_menu_big_button">Menu button</string>
     <string name="navbar_power_button">Power button</string>
     <string name="navbar_notifications_button">Notifications button</string>
-    <string name="accessibility_dpad_left">Cursor left</string>
-    <string name="accessibility_dpad_right">Cursor right</string>
 
     <!-- Development shortcuts -->
     <!-- Title shown in recents popup for wiping application's data -->
@@ -283,5 +281,4 @@
     <string name="expand_hint">Swipe down to expand</string>
     <string name="swipe_left_hint">Swipe left to <xliff:g id="app_name">%1$s</xliff:g></string>
     <string name="swipe_right_hint">Swipe right to notifications</string>
-
 </resources>
