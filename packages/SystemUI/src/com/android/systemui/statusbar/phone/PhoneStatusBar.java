@@ -864,19 +864,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     }
 	
-    private void forceAddNavigationBar() {
-        // If we have no Navbar view and we should have one, create it
-        if (mNavigationBarView != null) {
-            return;
-        }
 
-        mNavigationBarView = mNavigationController.getNavigationBarView(mContext);
-        mNavigationBarView.setDisabledFlags(mDisabled1);
-//        addNavigationBarCallback(mNavigationBarView);
-        mNavigationBarView.notifyInflateFromUser(); // let bar know we're not starting from boot
-//        addNavigationBar(true); // dynamically adding nav bar, reset System UI visibility!
-        addNavigationBar();
-    }
 	
     public void setStatusBarViewVisibility(boolean visible) {
         mStatusBarView.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
@@ -1014,11 +1002,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             return;
         }
 
-        mNavigationBarView =
-                (NavigationBarView) View.inflate(mContext, R.layout.navigation_bar, null);
-
+        mNavigationBarView = mNavigationController.getNavigationBarView(mContext);
         mNavigationBarView.setDisabledFlags(mDisabled1);
-        mNavigationBarView.setBar(this);
+//        addNavigationBarCallback(mNavigationBarView);
+        mNavigationBarView.notifyInflateFromUser(); // let bar know we're not starting from boot
+//        addNavigationBar(true); // dynamically adding nav bar, reset System UI visibility!
         addNavigationBar();
     }
 
@@ -3947,8 +3935,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     public void setImeWindowStatus(IBinder token, int vis, int backDisposition,
             boolean showImeSwitcher) {
         boolean imeShown = (vis & InputMethodService.IME_VISIBLE) != 0;
-        int flags = mNavigationBarView != null ?
-                mNavigationBarView.getNavigationIconHints() : mNavigationIconHints;
+        int flags = mNavigationIconHints;
         if ((backDisposition == InputMethodService.BACK_DISPOSITION_WILL_DISMISS) || imeShown) {
             flags |= NAVIGATION_HINT_BACK_ALT;
         } else {
@@ -4404,9 +4391,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mKeyguardWallpaper = wm.getKeyguardBitmap();
         updateMediaMetaData(true);
-        if (mNavigationBarView != null) {
-            mNavigationBarView.updateSettings();
-        }
     }
 
     public void hideHeadsUp() {
