@@ -4245,8 +4245,7 @@ final class ActivityStack {
             if (focusedStack && topTask) {
                 // Give the latest time to ensure foreground task can be sorted
                 // at the first, because lastActiveTime of creating task is 0.
-                // Only do this if the clock didn't run backwards, though.
-                ci.lastActiveTime = Math.max(ci.lastActiveTime, System.currentTimeMillis());
+                ci.lastActiveTime = System.currentTimeMillis();
                 topTask = false;
             }
 
