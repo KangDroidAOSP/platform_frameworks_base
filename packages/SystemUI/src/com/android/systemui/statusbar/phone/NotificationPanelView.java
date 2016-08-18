@@ -1694,7 +1694,7 @@ public class NotificationPanelView extends PanelView implements
             if (mTranslucentQuickSettings) {
                 handleQuickSettingsBackround();
             } else {
-                setQSBackgroundAlpha();
+				//Do Nothing
             }
         } catch (Exception e){
         }
@@ -3289,9 +3289,6 @@ public class NotificationPanelView extends PanelView implements
                     Settings.System.STATUS_BAR_EXPANDED_ENABLED_PREFERENCE_KEY, 0, UserHandle.USER_CURRENT) == 1;
             mTranslucencyPercentage = Settings.System.getInt(mContext.getContentResolver(),
                     Settings.System.TRANSLUCENT_QUICK_SETTINGS_PRECENTAGE_PREFERENCE_KEY, 60);
-
-            setQSPanelLogo();
-            setQSStroke();
             if (mTranslucentQuickSettings) {
                 mBlurDarkColorFilter = Color.LTGRAY;
                 mBlurMixedColorFilter = Color.GRAY;

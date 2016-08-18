@@ -305,12 +305,11 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         d = mHaloButton.getBackground();
         if (d instanceof RippleDrawable) {
             ((RippleDrawable) d).setForceSoftware(true);
+		}
 
         mStatusBarHeaderView = this;
         if (mTranslucentHeader) {
             handleStatusBarHeaderViewBackround();
-        } else {
-            //Do nothing
         }
     }
 
@@ -1295,8 +1294,6 @@ resolver.registerContentObserver(Settings.System.getUriFor(
             if (mTranslucentHeader) {
                 mTranslucencyPercentage = 255 - ((mTranslucencyPercentage * 255) / 100);
                 handleStatusBarHeaderViewBackround();
-            } else {
-				//Do nothing
             }
             updateEverything();
             updateVisibilities();
