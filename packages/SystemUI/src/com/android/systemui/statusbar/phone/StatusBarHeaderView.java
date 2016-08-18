@@ -302,8 +302,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mStatusBarHeaderView = this;
         if (mTranslucentHeader) {
             handleStatusBarHeaderViewBackround();
-        } else {
-            //Do nothing
         }
     }
 
@@ -1263,8 +1261,6 @@ resolver.registerContentObserver(Settings.System.getUriFor(
             if (mTranslucentHeader) {
                 mTranslucencyPercentage = 255 - ((mTranslucencyPercentage * 255) / 100);
                 handleStatusBarHeaderViewBackround();
-            } else {
-				//Do nothing
             }
             updateEverything();
             updateVisibilities();
