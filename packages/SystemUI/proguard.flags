@@ -16,3 +16,4 @@
 
 # org.dirtyunicorns.navigation trail-drawaing library fix
 -dontwarn com.google.common.annotations.VisibleForTesting
+-dontwarn com.cyngn.**
