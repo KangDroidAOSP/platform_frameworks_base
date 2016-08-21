@@ -5161,6 +5161,13 @@ public final class Settings {
          * @hide
          */
         public static final String NOTIFICATION_ALPHA = "notification_alpha";
+			
+			
+        /**
+         * Option to change statusbar transparency
+         * @hide
+         */
+        public static final String STATUSBAR_TRANSPARENCY = "statusbar_transparency";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings

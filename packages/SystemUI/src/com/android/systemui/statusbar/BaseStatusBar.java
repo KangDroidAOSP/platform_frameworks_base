@@ -1630,6 +1630,12 @@ public abstract class BaseStatusBar extends SystemUI implements
     public void onVisibilityChanged(boolean visible) {
         // Do nothing
     }
+	
+    protected void setStatusBarParams(View statusbarView){
+        int opacity = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUSBAR_TRANSPARENCY, 100);
+        statusbarView.getBackground().setAlpha(Math.round((opacity * 255) / 100));
+    }
 
     protected void rebuildRecentsScreen() {
         if (mSlimRecents != null) {

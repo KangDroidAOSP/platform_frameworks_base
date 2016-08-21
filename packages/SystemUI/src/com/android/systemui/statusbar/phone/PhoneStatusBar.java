@@ -969,6 +969,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.TRANSLUCENT_NOTIFICATIONS_PRECENTAGE_PREFERENCE_KEY, 70);
             //updatePreferences(this.mContext);
             //RecentsActivity.startBlurTask();
+			setStatusBarParams(mStatusBarView);
 
         }
     }
@@ -1562,7 +1563,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
 
         // figure out which pixel-format to use for the status bar.
-        mPixelFormat = PixelFormat.OPAQUE;
+        mPixelFormat = PixelFormat.TRANSLUCENT;
 
         mStackScroller = (NotificationStackScrollLayout) mStatusBarWindowContent.findViewById(
                 R.id.notification_stack_scroller);
@@ -4789,6 +4790,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (updateNavBar)  {
             mNavigationController.updateNavbarOverlay(getNavbarThemedResources());
         }
+		setStatusBarParams(mStatusBarView);
     }
 
     /**
